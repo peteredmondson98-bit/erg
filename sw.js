@@ -1,5 +1,5 @@
 // Erg service worker: works offline, picks up new versions when online.
-const CACHE = 'erg-v2';
+const CACHE = 'erg-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

@@ -19,6 +19,7 @@
 :root{
   --bg:#EEF1F8; --surface:#FFFFFF; --ink:#141933; --muted:#646A8A; --line:#D3D9E8; --track:#E1E5F0;
   --steady:#2B44E6; --intv:#D98200; --on-steady:#FFFFFF; --danger:#C8323C;
+  --UT2:#2B44E6; --UT1:#7A4BE0; --AT:#D98200; --TR:#E0532D; --AN:#C41E5B; --TEST:#141933;
   color-scheme:light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -28,12 +29,14 @@
   :root:not([data-theme="light"]){
     --bg:#121735; --surface:#1B2148; --ink:#EEF0FB; --muted:#959BC2; --line:#2E3668; --track:#272E5E;
     --steady:#8C99FF; --intv:#FFC23D; --on-steady:#121735; --danger:#FF7A80;
+    --UT2:#8C99FF; --UT1:#B79BFF; --AT:#FFC23D; --TR:#FF8A5C; --AN:#FF6B9A; --TEST:#EEF0FB;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#121735; --surface:#1B2148; --ink:#EEF0FB; --muted:#959BC2; --line:#2E3668; --track:#272E5E;
   --steady:#8C99FF; --intv:#FFC23D; --on-steady:#121735; --danger:#FF7A80;
+    --UT2:#8C99FF; --UT1:#B79BFF; --AT:#FFC23D; --TR:#FF8A5C; --AN:#FF6B9A; --TEST:#EEF0FB;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -76,14 +79,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .hero-side span{color:var(--muted);font-size:.92rem}
 
 .weeks{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:end;height:52px}
-.weeks i{display:block;border-radius:6px 6px 3px 3px;background:color-mix(in srgb,var(--steady) 38%,var(--track));min-height:4px;transform-origin:bottom;animation:grow .7s cubic-bezier(.2,.9,.25,1) both}
-.weeks i.zero{background:var(--track)}
-.weeks i.now{background:var(--steady)}
+.weeks .wk{display:flex;flex-direction:column-reverse;border-radius:6px 6px 3px 3px;overflow:hidden;min-height:4px;opacity:.55;transform-origin:bottom;animation:grow .7s cubic-bezier(.2,.9,.25,1) both}
+.weeks .wk.now{opacity:1}
+.weeks .wk.zero{background:var(--track);opacity:1}
+.weeks .wk i{display:block;min-height:0}
 @keyframes grow{from{transform:scaleY(0)}}
 .weeks-cap{display:flex;justify-content:space-between;color:var(--muted);font-size:.88rem;margin-top:8px}
 .weeks-cap b{color:var(--ink);font-weight:650}
 
-.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -22px;padding:2px 22px}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;flex:none}
 .chip{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:var(--surface);font-weight:620;font-size:.95rem;transition:background-color .2s,color .2s}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .dotk{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
@@ -127,7 +133,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus
 .primary svg{width:20px;height:20px}
 
 /* ---------- Sheets ---------- */
-.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;animation:rise .38s cubic-bezier(.2,.85,.2,1) both}
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;animation:fade .28s ease both}
+@keyframes fade{from{opacity:0}}
+.sheet-body{animation:rise .38s cubic-bezier(.2,.85,.2,1) both}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}}
 .sheet-bar{position:sticky;top:0;z-index:3;background:var(--bg);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px}
 .sheet-bar-in{max-width:460px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
@@ -202,7 +210,7 @@ input[type="datetime-local"].in{font-size:1rem}
 .sp-side{text-align:right;color:var(--muted);font-size:.88rem;line-height:1.35}
 .sp-side b{color:var(--ink);font-weight:620}
 .sp-bar{grid-column:2 / 4;height:7px;border-radius:99px;background:var(--track);overflow:hidden}
-.sp-bar i{display:block;height:100%;border-radius:99px;background:var(--steady);transform-origin:left;animation:fill .6s cubic-bezier(.2,.9,.25,1) both}
+.sp-bar i{display:block;height:100%;border-radius:99px;background:var(--bc,var(--steady));transform-origin:left;animation:fill .6s cubic-bezier(.2,.9,.25,1) both}
 .sp-bar.intervals i{background:var(--intv)}
 .sp-bar i.best{filter:saturate(1.3)}
 @keyframes fill{from{transform:scaleX(0)}}
@@ -229,8 +237,7 @@ input[type="datetime-local"].in{font-size:1rem}
 .plan-sub{color:var(--muted);font-size:.9rem;margin-top:3px}
 .plan-rest{color:var(--muted);font-weight:500;font-size:.9rem}
 .plan-sub b{color:var(--ink);font-weight:680}
-.log-it{padding:9px 14px;border-radius:999px;font-weight:680;font-size:.92rem;background:color-mix(in srgb,var(--steady) 14%,var(--surface))}
-.log-it.intervals{background:color-mix(in srgb,var(--intv) 22%,var(--surface))}
+.log-it{padding:9px 14px;border-radius:999px;font-weight:680;font-size:.92rem;background:color-mix(in srgb,var(--bc,var(--steady)) 18%,var(--surface))}
 .plan-x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
 .plan-x svg{width:15px;height:15px}
 .mini-seg{display:inline-grid;grid-template-columns:1fr 1fr;background:var(--track);border-radius:999px;padding:3px;margin-bottom:12px}
@@ -239,8 +246,7 @@ input[type="datetime-local"].in{font-size:1rem}
 .suggest{background:var(--surface);border-radius:24px;padding:20px}
 .sg-head{color:var(--muted);font-weight:600}
 .sg-split{display:flex;align-items:baseline;gap:10px;margin:6px 0 4px}
-.sg-split .big{font-size:clamp(3.6rem,19vw,5.4rem);color:var(--steady)}
-.sg-split.intervals .big{color:var(--intv)}
+.sg-split .big{font-size:clamp(3.6rem,19vw,5.4rem);color:var(--bc,var(--steady))}
 .sg-split span{color:var(--muted);font-weight:600}
 .sg-line{margin:2px 0;font-size:1rem}
 .sg-line b{font-weight:680}
@@ -255,7 +261,7 @@ input[type="datetime-local"].in{font-size:1rem}
 .dt-target{margin-top:-8px;color:var(--muted);font-weight:600}
 .dt-target b{color:var(--ink)}
 .ed-target{background:color-mix(in srgb,var(--steady) 10%,var(--surface));border-radius:18px;padding:12px 16px;font-weight:600}
-.ed-target.intervals{background:color-mix(in srgb,var(--intv) 16%,var(--surface))}
+.ed-target{background:color-mix(in srgb,var(--bc,var(--steady)) 14%,var(--surface))}
 
 /* ---------- Predictions ---------- */
 .teaser{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;background:var(--surface);border-radius:24px;padding:16px 18px}
@@ -290,6 +296,39 @@ input[type="datetime-local"].in{font-size:1rem}
 .switch input:focus-visible + .sw{outline:3px solid var(--steady);outline-offset:3px}
 .switch small{color:var(--muted);font-size:.86rem}
 
+/* ---------- Training bands ---------- */
+.dotk.UT2{background:var(--UT2)} .dotk.UT1{background:var(--UT1)} .dotk.AT{background:var(--AT)} .dotk.TR{background:var(--TR)} .dotk.AN{background:var(--AN)} .dotk.TEST{background:var(--TEST)}
+.help{width:34px;height:34px;border-radius:50%;background:var(--surface);font-weight:780;color:var(--muted);flex:none;display:grid;place-items:center;font-size:1rem}
+.band-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px}
+.band-head h3{margin:0}
+.bands{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.bands button{height:46px;border-radius:14px;background:var(--surface);font-weight:720;color:var(--muted);transition:background-color .15s,color .15s}
+.bands button[aria-pressed="true"]{background:var(--bc);color:var(--bg)}
+.band-note{color:var(--muted);font-size:.86rem;margin:8px 2px 0}
+.modal{position:fixed;inset:0;z-index:99999;background:rgba(5,7,20,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px 12px calc(16px + env(safe-area-inset-bottom,0px));animation:fade .2s ease both}
+.modal-card{background:var(--surface);border-radius:26px;padding:20px 20px 16px;max-width:460px;width:100%;max-height:85vh;overflow:auto;animation:rise .3s cubic-bezier(.2,.85,.2,1) both}
+.modal-card h2{margin:0 0 4px;font-size:1.25rem;font-weight:740}
+.modal-card > p{color:var(--muted);margin:0 0 8px;line-height:1.45;font-size:.95rem}
+.band-row{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);align-items:start}
+.band-row b{display:inline-block;padding:4px 0;width:48px;text-align:center;border-radius:10px;background:var(--bc);color:var(--bg);font-weight:760;font-size:.9rem}
+.band-row p{margin:0;line-height:1.4;font-size:.95rem}
+.band-row p span{display:block;color:var(--muted);font-size:.86rem;margin-top:2px}
+.modal-close{width:100%;height:50px;border-radius:999px;background:var(--bg);font-weight:700;margin-top:10px}
+.tag-btn{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:6px 12px 6px 10px;border-radius:999px;background:var(--surface);font-weight:650;font-size:.92rem}
+.tag-btn small{color:var(--muted);font-weight:500}
+.dt-bands{margin-top:10px}
+.rv{background:var(--surface);border-radius:20px;padding:14px}
+.rv + .rv{margin-top:10px}
+.rv-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.rv-top b{font-weight:680}
+.rv-top span{color:var(--muted);font-size:.88rem;white-space:nowrap}
+.rv-sub{color:var(--muted);font-size:.88rem;margin-top:2px}
+.rv .bands{margin-top:10px}
+.rv .bands button{height:38px;background:var(--bg)}
+.rv .bands button[aria-pressed="true"]{background:var(--bc)}
+.plan-band{font-size:.8rem;font-weight:760;padding:2px 7px;border-radius:8px;background:var(--bc);color:var(--bg)}
+.flag{background:color-mix(in srgb,var(--AT) 16%,var(--surface));border-radius:14px;padding:10px 12px;margin:12px 0 0;font-size:.92rem;line-height:1.4}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important}
 }
@@ -314,6 +353,11 @@ input[type="datetime-local"].in{font-size:1rem}
       </div>
     </div>
   </header>
+
+  <div class="banner" id="reviewBanner" hidden>
+    <span id="reviewText"></span>
+    <button id="reviewBtn">Review</button>
+  </div>
 
   <div class="banner" id="sampleBanner" hidden>
     <span>You’re looking at sample sessions.</span>
@@ -351,11 +395,7 @@ input[type="datetime-local"].in{font-size:1rem}
     <div id="plansList"></div>
   </section>
 
-  <div class="chips" role="group" aria-label="Filter sessions">
-    <button class="chip" data-f="all" aria-pressed="true">All</button>
-    <button class="chip" data-f="steady" aria-pressed="false"><i class="dotk steady"></i>Steady state</button>
-    <button class="chip" data-f="intervals" aria-pressed="false"><i class="dotk intervals"></i>Intervals</button>
-  </div>
+  <div class="chips" id="chips" role="group" aria-label="Filter sessions by training band"></div>
 
   <section class="panel" id="chartPanel" aria-label="Average split trend">
     <div class="panel-head">
@@ -391,6 +431,21 @@ input[type="datetime-local"].in{font-size:1rem}
   <div class="sheet-body" id="edBody"></div>
   <div class="dock"><button class="primary" id="edSave">Save session</button></div>
 </section>
+
+<!-- ================= Band review ================= -->
+<section class="sheet" id="review" hidden aria-label="Review training bands">
+  <div class="sheet-bar"><div class="sheet-bar-in">
+    <button class="icon-btn" id="rvClose" aria-label="Close without saving"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="sheet-title">Training bands</span>
+    <button class="help" data-help aria-label="What the bands mean">?</button>
+  </div></div>
+  <div class="sheet-body" id="rvBody"></div>
+  <div class="dock"><button class="primary" id="rvSave">Save bands</button></div>
+</section>
+
+<div class="modal" id="helpModal" hidden role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal-card" id="helpCard"></div>
+</div>
 
 <!-- ================= Predictions ================= -->
 <section class="sheet" id="predict" hidden aria-label="Predicted test times">
@@ -590,14 +645,73 @@ function titleOf(s){
     if (p.length === 1) return ds[0] ? fmtDist(ds[0]) : (ts[0] ? fmtTime(ts[0]) : '1 interval');
     if (ds.every(d => d && d === ds[0])) return `${p.length} × ${fmtDist(ds[0])}`;
     if (ts.every(t => t && Math.abs(t - ts[0]) < 0.05)) return `${p.length} × ${fmtTime(ts[0])}`;
-    return `${p.length} intervals`;
+    if (p.length <= 3) return p.map(x => num(x.distance) && !num(x.time) ? fmtDist(x.distance) : fmtTime(num(x.time))).join(' + ');
+    return `${p.length} pieces`;
   }
   const d = num(s.distance), t = num(s.time);
-  if (d && d % 1000 === 0) return `${fmtDist(d)} steady`;
-  if (t) return `${fmtTime(t)} steady`;
-  if (d) return `${fmtDist(d)} steady`;
-  return 'Steady state';
+  if (d && d % 1000 === 0) return fmtDist(d);
+  if (t) return fmtTime(t);
+  if (d) return fmtDist(d);
+  return 'Single piece';
 }
+
+/* ================= Training bands ================= */
+const BANDS = ['UT2', 'UT1', 'AT', 'TR', 'AN'];
+const BAND_INFO = {
+  UT2: ['Utilisation 2', 'Easy aerobic base work, the bulk of training. You could hold a conversation.', 'Usually r18–20'],
+  UT1: ['Utilisation 1', 'Stronger aerobic work. Steady but working, short sentences only.', 'Usually r20–24'],
+  AT:  ['Anaerobic threshold', 'Raises the pace you can hold before fatigue builds quickly. Hard but controlled.', 'Usually r24–28'],
+  TR:  ['Transport', 'Race-pace work. Very hard, close to 2k effort.', 'Usually r28–36'],
+  AN:  ['Anaerobic', 'Short, flat-out sprints for speed and power.', 'Usually r36 and up']
+};
+const BAND_RATE = { UT2: [18, 20], UT1: [20, 24], AT: [24, 28], TR: [28, 36], AN: [36, 48] };
+let ut2Base = null; // typical split of easy work (rate 20 or under), used to help guess bands
+function computeBase(){
+  const v = sessions.filter(s => !s.test).map(s => summarise(s)).filter(x => x.split && x.rate && x.rate <= 20.5).map(x => x.split).sort((a, b) => a - b);
+  ut2Base = v.length >= 2 ? v[Math.floor(v.length / 2)] : null;
+}
+function restRatio(s){
+  const ps = s.pieces || []; if (s.type !== 'intervals' || ps.length < 2) return 0;
+  const work = ps.map(p => num(p.time) || (pieceSplit(p) && num(p.distance) ? pieceSplit(p) * p.distance / 500 : null)).filter(Boolean);
+  const rest = ps.map(p => num(p.rest) || 0);
+  const w = work.length ? work.reduce((a, b) => a + b, 0) / work.length : 0;
+  return w ? (rest.reduce((a, b) => a + b, 0) / ps.length) / w : 0;
+}
+function guessBand(s){
+  const sum = summarise(s), r = sum.rate;
+  let i;
+  if (r){
+    i = r <= 20.5 ? 0 : r <= 24.5 ? 1 : r <= 28.5 ? 2 : r <= 35.5 ? 3 : 4;
+  } else if (ut2Base && sum.split){
+    const dlt = ut2Base - sum.split;
+    i = dlt < 4 ? 0 : dlt < 9 ? 1 : dlt < 14 ? 2 : dlt < 20 ? 3 : 4;
+  } else i = 0;
+  // Short pieces with long rest are harder than their rate suggests
+  if (s.type === 'intervals' && i < 2){
+    const ps = s.pieces || [];
+    const avgT = sum.time && ps.length ? sum.time / ps.length : null;
+    if (avgT && avgT <= 240 && restRatio(s) >= 0.5) i = 2;
+  }
+  // Easy-rate work that is clearly quicker than your usual easy pace
+  if (i === 0 && ut2Base && sum.split && ut2Base - sum.split >= 5) i = 1;
+  return BANDS[i];
+}
+const bandOf = s => (s && BANDS.includes(s.band)) ? s.band : guessBand(s);
+const keyOf = s => s.test ? 'TEST' : bandOf(s);
+const bandsHTML = (sel, attr) => `<div class="bands" role="group" aria-label="Training band">${BANDS.map(b =>
+  `<button type="button" ${attr}="${b}" style="--bc:var(--${b})" aria-pressed="${b === sel}">${b}</button>`).join('')}</div>`;
+
+function openHelp(){
+  $('#helpCard').innerHTML = `<h2 id="helpTitle">Training bands</h2>
+    <p>The app guesses a band from your rate and split, and you can always change it. Rates are typical, not fixed.</p>
+    ${BANDS.map(b => `<div class="band-row"><b style="--bc:var(--${b})">${b}</b><p>${esc(BAND_INFO[b][0])}. ${esc(BAND_INFO[b][1])}<span>${esc(BAND_INFO[b][2])}</span></p></div>`).join('')}
+    <button class="modal-close" id="helpClose">Close</button>`;
+  $('#helpModal').hidden = false; $('#helpCard').scrollTop = 0;
+  $('#helpClose').addEventListener('click', closeHelp); $('#helpClose').focus({ preventScroll: true });
+}
+function closeHelp(){ $('#helpModal').hidden = true; }
+document.addEventListener('click', e => { if (e.target.closest('[data-help]')) openHelp(); });
+$('#helpModal').addEventListener('click', e => { if (e.target.id === 'helpModal') closeHelp(); });
 
 /* ================= State ================= */
 let sessions = [];
@@ -608,6 +722,7 @@ try { window.claude?.use?.('downloads').then(d => { downloads = d; }).catch(() =
 async function load(){
   const all = await DB.all('sessions');
   sessions = (all || []).sort((a, b) => parseDate(b.date) - parseDate(a.date));
+  computeBase();
 }
 
 /* ================= Home ================= */
@@ -630,22 +745,35 @@ function renderHome(){
 
   // Weekly bars
   const ws = weekStart(now), weeks = [];
-  for (let i = 11; i >= 0; i--){ const a = new Date(ws); a.setDate(a.getDate() - i * 7); weeks.push({ start: a, m: 0 }); }
+  for (let i = 11; i >= 0; i--){ const a = new Date(ws); a.setDate(a.getDate() - i * 7); weeks.push({ start: a, m: 0, by: {} }); }
   sessions.forEach(s => {
     const d = parseDate(s.date);
     for (let i = weeks.length - 1; i >= 0; i--){
-      if (d >= weeks[i].start){ const end = new Date(weeks[i].start); end.setDate(end.getDate() + 7); if (d < end) weeks[i].m += summarise(s).distance || 0; break; }
+      if (d >= weeks[i].start){
+        const end = new Date(weeks[i].start); end.setDate(end.getDate() + 7);
+        if (d < end){ const m = summarise(s).distance || 0, b = bandOf(s); weeks[i].m += m; weeks[i].by[b] = (weeks[i].by[b] || 0) + m; }
+        break;
+      }
     }
   });
   const max = Math.max(1, ...weeks.map(w => w.m));
   $('#weeks').innerHTML = weeks.map((w, i) => {
     const h = w.m ? Math.max(10, w.m / max * 100) : 8;
-    const lbl = `Week of ${w.start.getDate()} ${MO[w.start.getMonth()].slice(0, 3)}, ${fmtDist(w.m)}`;
-    return `<i class="${w.m ? '' : 'zero'} ${i === 11 ? 'now' : ''}" style="height:${h}%;animation-delay:${i * 30}ms" title="${esc(lbl)}" aria-label="${esc(lbl)}" role="img"></i>`;
+    const parts = BANDS.filter(b => w.by[b]).map(b => `${b} ${fmtDist(w.by[b])}`).join(', ');
+    const lbl = `Week of ${w.start.getDate()} ${MO[w.start.getMonth()].slice(0, 3)}, ${fmtDist(w.m)}${parts ? ` (${parts})` : ''}`;
+    const segs = BANDS.filter(b => w.by[b]).map(b => `<i style="flex:${w.by[b]};background:var(--${b})"></i>`).join('');
+    return `<div class="wk ${w.m ? '' : 'zero'} ${i === 11 ? 'now' : ''}" style="height:${h}%;animation-delay:${i * 30}ms" title="${esc(lbl)}" aria-label="${esc(lbl)}" role="img">${segs}</div>`;
   }).join('');
   $('#weekNow').textContent = fmtDist(weeks[11].m);
 
-  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.f === filter)));
+  const present = new Set(sessions.map(keyOf));
+  const chipList = [['all', 'All']].concat(BANDS.filter(b => present.has(b)).map(b => [b, b]), present.has('TEST') ? [['TEST', 'Tests']] : []);
+  if (!chipList.some(c => c[0] === filter)) filter = 'all';
+  $('#chips').innerHTML = chipList.map(([f, l]) => `<button class="chip" data-f="${f}" aria-pressed="${f === filter}">${f === 'all' ? '' : `<i class="dotk ${f}"></i>`}${l}</button>`).join('') +
+    `<button class="help" data-help aria-label="What the bands mean">?</button>`;
+  const unset = sessions.filter(s => !BANDS.includes(s.band)).length;
+  $('#reviewBanner').hidden = !unset;
+  $('#reviewText').textContent = `${unset} session${unset === 1 ? '' : 's'} need${unset === 1 ? 's' : ''} a training band.`;
   $('#chartPanel').hidden = !has;
   renderChart();
   renderTimeline();
@@ -653,7 +781,7 @@ function renderHome(){
   renderTeaser();
 }
 
-function filtered(){ return sessions.filter(s => filter === 'all' || s.type === filter); }
+function filtered(){ return sessions.filter(s => filter === 'all' || keyOf(s) === filter || (filter !== 'TEST' && bandOf(s) === filter && !s.test)); }
 
 function renderChart(){
   const wrap = $('#chartWrap');
@@ -671,7 +799,7 @@ function renderChart(){
   const padY = Math.max(1.5, (y1 - y0) * 0.12); y0 -= padY; y1 += padY;
   const X = t => L + (t1 === t0 ? (W - L - R) / 2 : (t - t0) / (t1 - t0) * (W - L - R));
   const Y = v => T + (v - y0) / (y1 - y0) * (H - T - B); // faster (lower) split sits higher
-  const types = filter === 'all' ? ['steady', 'intervals'] : [filter];
+  const types = filter === 'all' ? [...BANDS, 'TEST'].filter(k => pts.some(p => keyOf(p.s) === k)) : [filter];
   let svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Average split per session over the last 12 weeks">`;
   const fast = y0 + padY, slow = y1 - padY;
   [fast, slow].forEach(v => {
@@ -682,8 +810,8 @@ function renderChart(){
   svg += `<text x="${L}" y="${H - 6}">${d0.getDate()} ${MO[d0.getMonth()].slice(0, 3)}</text>`;
   svg += `<text x="${W - R}" y="${H - 6}" text-anchor="end">${d1.getDate()} ${MO[d1.getMonth()].slice(0, 3)}</text>`;
   types.forEach(ty => {
-    const tp = pts.filter(p => p.s.type === ty);
-    const col = ty === 'steady' ? 'var(--steady)' : 'var(--intv)';
+    const tp = pts.filter(p => keyOf(p.s) === ty);
+    const col = `var(--${ty})`;
     if (tp.length > 1) svg += `<polyline fill="none" stroke="${col}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" points="${tp.map(p => `${X(p.t).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ')}"/>`;
     tp.forEach((p, i) => {
       const last = i === tp.length - 1;
@@ -700,7 +828,7 @@ function renderChart(){
 function signature(s){
   const W = 76, H = 34;
   const ps = (s.pieces || []).map(pieceSplit).filter(Boolean);
-  const col = s.type === 'steady' ? 'var(--steady)' : 'var(--intv)';
+  const col = `var(--${keyOf(s)})`;
   if (ps.length < 2){
     return `<svg class="sig" viewBox="0 0 ${W} ${H}" aria-hidden="true"><rect x="2" y="${H / 2 - 4}" width="${W - 4}" height="8" rx="4" fill="${col}" opacity=".9"/></svg>`;
   }
@@ -725,7 +853,7 @@ function renderTimeline(){
   const nowY = new Date().getFullYear();
   let html = '';
   if (sessions.length && !list.length){
-    html = `<section class="panel"><p class="chart-empty" style="margin:0">No ${filter === 'steady' ? 'steady state' : 'interval'} sessions yet.</p></section>`;
+    html = `<section class="panel"><p class="chart-empty" style="margin:0">No ${filter === 'TEST' ? 'test' : filter} sessions yet.</p></section>`;
   }
   groups.forEach(g => {
     const metres = g.items.reduce((a, s) => a + (summarise(s).distance || 0), 0);
@@ -733,10 +861,9 @@ function renderTimeline(){
     html += `<section class="month" aria-label="${esc(name)}"><div class="month-head"><h2>${esc(name)}</h2><span>${g.items.length} session${g.items.length === 1 ? '' : 's'}, ${esc(fmtDist(metres))}</span></div>`;
     g.items.forEach(s => {
       const d = parseDate(s.date), sum = summarise(s);
-      const sub = [];
+      const sub = [`<span style="color:var(--${keyOf(s)});font-weight:720">${s.test ? 'Test' : bandOf(s)}</span>`];
       if (sum.split) sub.push(`<span><b>${esc(fmtSplit(sum.split))}</b> /500m</span>`);
-      if (s.type === 'steady' && sum.distance && !/^[\d,]+m steady$/.test(titleOf(s))) sub.push(`<span>${esc(fmtDist(sum.distance))}</span>`);
-      else if (sum.time && s.type === 'steady') sub.push(`<span>${esc(fmtTime(sum.time))}</span>`);
+      if (sum.rate) sub.push(`<span>r${Math.round(sum.rate)}</span>`);
       if (sum.hr) sub.push(`<span>${Math.round(sum.hr)} bpm</span>`);
       html += `<button class="row" data-id="${esc(s.id)}">
         <div><div class="d-num">${d.getDate()}</div><div class="d-wd">${WD[d.getDay()]}</div></div>
@@ -759,7 +886,8 @@ async function openDetail(id){
   let html = `<div>
     <div class="dt-date">${WDL[d.getDay()]} ${d.getDate()} ${MO[d.getMonth()]} ${d.getFullYear()}, ${pad2(d.getHours())}:${pad2(d.getMinutes())}</div>
     <h1 class="dt-title">${esc(titleOf(s))}</h1>
-    <div class="tag"><i class="dotk ${s.type}"></i>${s.type === 'steady' ? (s.test ? 'Test piece' : 'Steady state') : 'Intervals'}</div>
+    <button class="tag-btn" id="dtBand" aria-expanded="false"><i class="dotk ${bandOf(s)}"></i>${bandOf(s)}${s.test ? ', test piece' : ''}<small>${BANDS.includes(s.band) && !s.bandGuessed ? 'change' : 'guessed, change'}</small></button>
+    <div class="dt-bands" id="dtBands" hidden>${bandsHTML(bandOf(s), 'data-dtband')}</div>
   </div>`;
   if (sum.split) html += `<div class="dt-split"><div class="big">${esc(fmtSplit(sum.split))}</div><span>avg /500m</span></div>`;
   if (sum.split && num(s.target)){
@@ -795,7 +923,7 @@ async function openDetail(id){
         <div class="sp-n">${i + 1}</div>
         <div class="sp-main"><b>${sp ? esc(fmtSplit(sp)) : '—'}</b>${isBest ? '<span class="best-tag">fastest</span>' : ''}<span>${esc(meta)}</span></div>
         <div class="sp-side">${side}</div>
-        <div class="sp-n"></div><div class="sp-bar ${s.type}"><i style="width:${(k * 100).toFixed(1)}%;animation-delay:${i * 40}ms"></i></div>
+        <div class="sp-n"></div><div class="sp-bar" style="--bc:var(--${keyOf(s)})"><i style="width:${(k * 100).toFixed(1)}%;animation-delay:${i * 40}ms"></i></div>
         ${s.type === 'intervals' && num(p.rest) ? `<div class="sp-n"></div><div class="sp-rest">${esc(fmtTime(p.rest))} rest</div>` : ''}
       </div>`;
     });
@@ -819,6 +947,12 @@ async function openDetail(id){
       b.appendChild(img); b.addEventListener('click', () => openLightbox(ph.data)); box.appendChild(b);
     }
   }
+  $('#dtBand').addEventListener('click', e => { const box = $('#dtBands'); box.hidden = !box.hidden; e.currentTarget.setAttribute('aria-expanded', String(!box.hidden)); });
+  $('#dtBands').addEventListener('click', async e => {
+    const b = e.target.closest('[data-dtband]'); if (!b) return;
+    s.band = b.dataset.dtband; s.bandGuessed = false; s.updated = Date.now();
+    await DB.put('sessions', s); await load(); renderHome(); openDetail(s.id); toast(`Set to ${s.band}`);
+  });
   let armed = null;
   $('#dtDelete').addEventListener('click', async e => {
     const btn = e.currentTarget;
@@ -842,9 +976,12 @@ function openEditor(s, fromPlan){
     id: uid(), date: localISO(new Date()), type: 'steady', name: '', distance: null, time: null, split: null,
     rate: null, hr: null, maxHr: null, watts: null, cal: null, drag: null, pieces: [], notes: '', photos: []
   };
+  draft.bandAuto = !BANDS.includes(draft.band) || !!draft.bandGuessed;
   if (fromPlan){
     const sg = suggest(fromPlan);
-    draft.type = fromPlan.type; draft.planId = fromPlan.id; draft.target = sg ? +sg.target.toFixed(1) : null;
+    draft.type = fromPlan.type; draft.planId = fromPlan.id; draft.target = sg && !sg.none && !sg.noband ? +sg.target.toFixed(1) : null;
+    draft.targetRate = fromPlan.rate || null;
+    if (BANDS.includes(fromPlan.band)){ draft.band = fromPlan.band; draft.bandAuto = false; }
     if (fromPlan.type === 'intervals'){
       draft.pieces = Array.from({ length: fromPlan.n }, () => ({ ...blankPiece(),
         distance: fromPlan.mode === 'd' ? fromPlan.value : null, time: fromPlan.mode === 't' ? fromPlan.value : null, rest: fromPlan.rest || null }));
@@ -873,9 +1010,10 @@ function pfield(i, key, label, kind){
 function renderEditor(){
   const isI = draft.type === 'intervals';
   let h = `<div class="seg" role="group" aria-label="Session type">
-      <button data-type="steady" aria-pressed="${!isI}"><i class="dotk steady"></i>Steady state</button>
-      <button data-type="intervals" aria-pressed="${isI}"><i class="dotk intervals"></i>Intervals</button>
+      <button data-type="steady" aria-pressed="${!isI}">One piece</button>
+      <button data-type="intervals" aria-pressed="${isI}">Pieces</button>
     </div>
+    <div class="group" id="bandGroup"></div>
     <div class="grid2" style="grid-template-columns:1fr">
       <div class="field"><label for="f-date"><span>Date and time</span></label><input class="in" type="datetime-local" id="f-date" data-k="date" data-kind="text"></div>
       ${field('name', 'Name', 'optional', 'text', 'placeholder="Auto"')}
@@ -883,7 +1021,7 @@ function renderEditor(){
   if (!isI) h += `<label class="switch"><input type="checkbox" id="f-test" data-k="test" data-kind="bool"><span class="sw" aria-hidden="true"></span>
       <span><b>Flat-out test piece</b><br><small>Used to predict your test times</small></span></label>`;
 
-  if (num(draft.target)) h += `<div class="ed-target ${draft.type}">Target split ${esc(fmtSplit(draft.target))} /500m</div>`;
+  if (num(draft.target)) h += `<div class="ed-target" style="--bc:var(--${bandOf(draft)})">Target split ${esc(fmtSplit(draft.target))} /500m${draft.targetRate ? ` at r${draft.targetRate}` : ''}</div>`;
   if (!isI){
     h += `<div class="group"><h3>Session</h3><div class="grid2">
       ${field('distance', 'Distance', 'm', 'int')}
@@ -900,9 +1038,9 @@ function renderEditor(){
       <div class="actions"><button class="add accent st" id="addPiece">${ICON.plus}Add split</button></div></div>`;
   } else {
     h += `<div class="summary" id="iSummary"></div>
-    <div class="group"><h3>Intervals</h3><div id="pieces"></div>
+    <div class="group"><h3>Pieces</h3><div id="pieces"></div>
       <div class="actions">
-        <button class="add accent" id="addPiece">${ICON.plus}Add interval</button>
+        <button class="add accent" id="addPiece">${ICON.plus}Add piece</button>
         <button class="add" id="repeatPiece">${ICON.copy}Repeat last</button>
       </div></div>
     <div class="group"><h3>Whole session</h3><div class="grid2">
@@ -925,6 +1063,10 @@ function renderEditor(){
   renderPieces();
   renderPhotos();
   refreshCalc();
+  $('#bandGroup').addEventListener('click', e => {
+    const b = e.target.closest('[data-edband]'); if (!b) return;
+    draft.band = b.dataset.edband; draft.bandAuto = false; renderBandPicker();
+  });
 
   $('#edBody').querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
     collect(); if (draft.type === b.dataset.type) return;
@@ -944,7 +1086,7 @@ function renderPieces(focusLast){
   const box = $('#pieces'); if (!box) return;
   const isI = draft.type === 'intervals';
   box.innerHTML = draft.pieces.map((p, i) => `<div class="piece" data-i="${i}">
-      <div class="piece-head"><b>${isI ? 'Interval' : 'Split'} ${i + 1}</b><button data-rm="${i}" aria-label="Remove ${isI ? 'interval' : 'split'} ${i + 1}">${ICON.x}</button></div>
+      <div class="piece-head"><b>${isI ? 'Piece' : 'Split'} ${i + 1}</b><button data-rm="${i}" aria-label="Remove ${isI ? 'piece' : 'split'} ${i + 1}">${ICON.x}</button></div>
       <div class="grid3">
         ${pfield(i, 'distance', 'Distance', 'int')}${pfield(i, 'time', 'Time', 'time')}${pfield(i, 'split', 'Split', 'time')}
         ${pfield(i, 'rate', 'Rate', 'int')}${pfield(i, 'hr', 'HR', 'int')}${isI ? pfield(i, 'rest', 'Rest', 'time') : ''}
@@ -993,8 +1135,16 @@ function setCalc(inp, val, fmt){
   else { inp.placeholder = inp.dataset.kind === 'time' ? '0:00.0' : ''; inp.classList.remove('calc'); }
 }
 
+function renderBandPicker(){
+  const box = $('#bandGroup'); if (!box || !draft) return;
+  if (draft.bandAuto) draft.band = guessBand(draft);
+  box.innerHTML = `<div class="band-head"><h3>Training band</h3><button type="button" class="help" data-help aria-label="What the bands mean">?</button></div>
+    ${bandsHTML(draft.band, 'data-edband')}
+    <p class="band-note">${draft.bandAuto ? 'Guessed from your rate and split. Tap to change.' : 'Set by you.'}</p>`;
+}
 function refreshCalc(){
   collect();
+  renderBandPicker();
   const isI = draft.type === 'intervals';
   // Piece splits
   draft.pieces.forEach((p, i) => setCalc($(`#p${i}-split`), splitOf(num(p.time), num(p.distance)), fmtSplit));
@@ -1093,6 +1243,8 @@ async function saveDraft(){
   for (const ph of edPhotos.filter(p => p.isNew)) await DB.put('photos', { id: ph.id, sessionId: draft.id, data: ph.data });
   for (const pid of removedPhotos) await DB.del('photos', pid);
   draft.photos = edPhotos.map(p => p.id);
+  if (draft.bandAuto) draft.band = guessBand(draft);
+  draft.bandGuessed = !!draft.bandAuto; delete draft.bandAuto;
   draft.updated = Date.now(); draft.created = draft.created || Date.now();
   const wasEdit = sessions.some(s => s.id === draft.id);
   await DB.put('sessions', draft);
@@ -1122,7 +1274,7 @@ function showSheet(sel){
 }
 function hideSheetNow(sel){
   $(sel).hidden = true;
-  if ($('#editor').hidden && $('#detail').hidden && $('#planner').hidden && $('#predict').hidden){ document.body.classList.remove('locked'); $('#dock').hidden = false; }
+  if ($('#editor').hidden && $('#detail').hidden && $('#planner').hidden && $('#predict').hidden && $('#review').hidden){ document.body.classList.remove('locked'); $('#dock').hidden = false; }
 }
 function hideSheet(sel){
   if (!framed && stack.length && stack[stack.length - 1] === sel){ history.back(); return; }
@@ -1135,7 +1287,9 @@ $('#lbClose').addEventListener('click', () => hideSheet('#lightbox'));
 $('#lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') hideSheet('#lightbox'); });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (!$('#lightbox').hidden) hideSheet('#lightbox');
+  if (!$('#helpModal').hidden) closeHelp();
+  else if (!$('#lightbox').hidden) hideSheet('#lightbox');
+  else if (!$('#review').hidden) hideSheet('#review');
   else if (!$('#editor').hidden) hideSheet('#editor');
   else if (!$('#planner').hidden) hideSheet('#planner');
   else if (!$('#predict').hidden) hideSheet('#predict');
@@ -1181,11 +1335,11 @@ async function loadSample(){
     const parts = 5, pd = dist / parts;
     const pieces = Array.from({ length: parts }, (_, i) => { const sp = jitter(split - i * 0.4, 1.2); return { distance: pd, time: +(sp * pd / 500).toFixed(1), split: null, rate, hr: hr - 6 + i * 3, rest: null }; });
     const time = pieces.reduce((a, p) => a + p.time, 0);
-    list.push({ id: uid(), sample: true, date: day(n), type: 'steady', name: '', distance: dist, time: +time.toFixed(1), split: null, rate, hr, maxHr: hr + 9, watts: null, cal: null, drag: 118, pieces, notes: '', photos: [] });
+    list.push({ id: uid(), sample: true, band: 'UT2', date: day(n), type: 'steady', name: '', distance: dist, time: +time.toFixed(1), split: null, rate, hr, maxHr: hr + 9, watts: null, cal: null, drag: 118, pieces, notes: '', photos: [] });
   };
   const intervals = (n, count, dist, split, rate, hr, rest) => {
     const pieces = Array.from({ length: count }, (_, i) => { const sp = jitter(split + (i === count - 1 ? -1.4 : i * 0.25), 1.4); return { distance: dist, time: +(sp * dist / 500).toFixed(1), split: null, rate, hr: hr - 4 + i * 2, rest }; });
-    list.push({ id: uid(), sample: true, date: day(n), type: 'intervals', name: '', distance: null, time: null, split: null, rate: null, hr: null, maxHr: hr + 12, watts: null, cal: null, drag: 120, pieces, notes: '', photos: [] });
+    list.push({ id: uid(), sample: true, band: rate >= 30 ? 'TR' : rate >= 25 ? 'AT' : 'UT1', date: day(n), type: 'intervals', name: '', distance: null, time: null, split: null, rate: null, hr: null, maxHr: hr + 12, watts: null, cal: null, drag: 120, pieces, notes: '', photos: [] });
   };
   const plan = [[1,'s',10000,127.5,20,148],[3,'i',8,500,106,30,171,90],[5,'s',12000,128.2,19,146],[8,'i',4,2000,113.5,26,166,300],
     [10,'s',10000,126.8,20,150],[13,'i',8,500,106.6,30,170,90],[16,'s',8000,126.0,21,152],[19,'i',3,3000,116.5,24,162,240],
@@ -1196,11 +1350,11 @@ async function loadSample(){
   const test = (n, dist, splits, rate, hr) => {
     const pd = dist / splits.length;
     const pieces = splits.map((sp, i) => ({ distance: pd, time: +(sp * pd / 500).toFixed(1), split: null, rate: rate + (i === splits.length - 1 ? 3 : 0), hr: hr - 8 + i * 3, rest: null }));
-    list.push({ id: uid(), sample: true, test: true, date: day(n), type: 'steady', name: '', distance: dist, time: +pieces.reduce((a, p) => a + p.time, 0).toFixed(1), split: null, rate, hr, maxHr: hr + 6, watts: null, cal: null, drag: 125, pieces, notes: '', photos: [] });
+    list.push({ id: uid(), sample: true, test: true, band: 'TR', date: day(n), type: 'steady', name: '', distance: dist, time: +pieces.reduce((a, p) => a + p.time, 0).toFixed(1), split: null, rate, hr, maxHr: hr + 6, watts: null, cal: null, drag: 125, pieces, notes: '', photos: [] });
   };
   test(41, 2000, [108.6, 110.4, 110.9, 109.1], 32, 181);
   test(18, 5000, [114.8, 115.9, 116.4, 116.2, 114.9], 28, 176);
-  list.push({ id: uid(), sample: true, date: day(27), type: 'steady', name: '', distance: 7404, time: 1800, split: null, rate: 20, hr: 158, maxHr: 166, watts: null, cal: null, drag: 120, pieces: [], notes: '', photos: [] });
+  list.push({ id: uid(), sample: true, band: 'UT2', date: day(27), type: 'steady', name: '', distance: 7404, time: 1800, split: null, rate: 20, hr: 158, maxHr: 166, watts: null, cal: null, drag: 120, pieces: [], notes: '', photos: [] });
   for (const s of list) await DB.put('sessions', s);
   await load(); renderHome();
 }
@@ -1241,7 +1395,7 @@ const PAUL = 5; // Paul's Law: about 5 s per 500m slower each time the distance 
 function planComplete(p){ return p && p.value > 0 && (p.type === 'steady' || p.n > 0); }
 function planTitle(p){
   const v = p.mode === 'd' ? fmtDist(p.value) : fmtTime(p.value);
-  return p.type === 'intervals' ? `${p.n} × ${v}` : `${v} steady`;
+  return p.type === 'intervals' ? `${p.n} × ${v}` : v;
 }
 function planKey(p){ return `${p.type}:${p.mode}${Math.round(p.mode === 't' ? p.value * 10 : p.value)}:${p.type === 'intervals' ? p.n : 1}`; }
 function sessionKey(s){
@@ -1257,33 +1411,63 @@ function sessionKey(s){
   if (num(s.time)) return `steady:t${Math.round(s.time * 10)}:1`;
   return '';
 }
-function historyPoints(type){
-  return sessions.filter(s => s.type === type && !s.test).map(s => {
+const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+const median = a => { const v = [...a].sort((x, y) => x - y); return v[Math.floor(v.length / 2)]; };
+
+// Pieces with very short rest (under 15% of the work) behave like one continuous piece
+function effPiece(s, sum){
+  const ps = s.pieces || [];
+  if (s.type !== 'intervals' || ps.length < 2 || restRatio(s) < 0.15) return { d: sum.distance, n: 1 };
+  return { d: sum.distance / ps.length, n: ps.length };
+}
+function pointsFor(filterFn){
+  return sessions.filter(s => !s.test && filterFn(s)).map(s => {
     const sum = summarise(s); if (!sum.split || !sum.distance) return null;
-    const ps = s.pieces || [], n = type === 'intervals' ? Math.max(1, ps.length) : 1;
-    const rests = ps.map(p => num(p.rest)).filter(v => v != null);
-    return { s, split: sum.split, d: sum.distance / n, n, rest: rests.length ? rests.reduce((a, b) => a + b, 0) / rests.length : 0,
-      work: sum.time ? sum.time / n : null, t: parseDate(s.date).getTime(), key: sessionKey(s) };
+    const e = effPiece(s, sum);
+    const rests = (s.pieces || []).map(p => num(p.rest)).filter(v => v != null);
+    return { s, split: sum.split, d: e.d, n: e.n, rate: sum.rate || null, rest: rests.length ? avg(rests) : 0,
+      t: parseDate(s.date).getTime(), key: sessionKey(s) };
   }).filter(Boolean);
 }
+// Your own split-to-rate pattern: change in split per extra stroke per minute, lengths evened out with Paul's Law
+function rateSlope(pts){
+  const ps = pts.filter(p => p.rate);
+  if (ps.length < 3) return null;
+  const rs = ps.map(p => p.rate); if (Math.max(...rs) - Math.min(...rs) < 2) return null;
+  const ys = ps.map(p => p.split + PAUL * log2(2000 / p.d));
+  const mx = avg(rs), my = avg(ys);
+  let sxy = 0, sxx = 0; ps.forEach((p, i) => { sxy += (rs[i] - mx) * (ys[i] - my); sxx += (rs[i] - mx) ** 2; });
+  const slope = sxx ? sxy / sxx : 0;
+  return slope < 0 ? Math.max(-5, slope) : null;
+}
+
 function suggest(p){
   if (!planComplete(p)) return null;
-  const pts = historyPoints(p.type); if (!pts.length) return { none: true };
+  if (!BANDS.includes(p.band)) return { noband: true };
+  const pts = pointsFor(s => bandOf(s) === p.band); if (!pts.length) return { none: true };
   const now = Date.now(), key = planKey(p);
+  const typical = median(pts.map(x => x.split));
+  const pieceT = p.mode === 't' ? p.value : p.value / 500 * typical;
+  const cont = p.type !== 'intervals' || ((p.rest || 0) / pieceT < 0.15);
+  const mult = p.type === 'intervals' && cont ? p.n : 1;
+  let slope = rateSlope(pts), slopeFrom = 'band';
+  if (slope == null){ slope = rateSlope(pointsFor(() => true)); slopeFrom = slope == null ? null : 'all'; }
   let W = 0, S = 0; const rows = [];
   pts.forEach(pt => {
-    let dP = p.value, proj = pt.split;
-    if (p.mode === 'd') proj = pt.split + PAUL * log2(dP / pt.d);
-    else for (let i = 0; i < 4; i++){ dP = p.value / proj * 500; proj = pt.split + PAUL * log2(dP / pt.d); }
+    let dP = p.value * mult, proj = pt.split;
+    const rateAdj = (p.rate && pt.rate && slope != null) ? slope * (p.rate - pt.rate) : 0;
+    if (p.mode === 'd') proj = pt.split + PAUL * log2(dP / pt.d) + rateAdj;
+    else for (let i = 0; i < 4; i++){ dP = p.value * mult / proj * 500; proj = pt.split + PAUL * log2(dP / pt.d) + rateAdj; }
     const ageW = Math.pow(0.5, Math.max(0, (now - pt.t) / 864e5) / 28);
     const sim = Math.exp(-1.2 * Math.abs(log2(dP / pt.d)));
-    let w = ageW * sim;
-    if (p.type === 'intervals'){
+    const rateW = p.rate && pt.rate ? Math.exp(-0.35 * Math.abs(p.rate - pt.rate)) : 0.6;
+    let w = ageW * sim * rateW;
+    if (p.type === 'intervals' && !cont && pt.n > 1){
       w *= Math.exp(-0.5 * Math.abs(log2(p.n / pt.n)));
       w *= Math.exp(-0.5 * Math.abs(log2(((p.rest || 0) + 10) / (pt.rest + 10))));
     }
-    const exact = pt.key === key;
-    if (exact) w *= 4;
+    const exact = pt.key === key && (!p.rate || !pt.rate || Math.abs(p.rate - pt.rate) <= 1);
+    if (exact) w *= 3;
     W += w; S += w * proj; rows.push({ pt, proj, w, exact, sim });
   });
   const mean = S / W;
@@ -1296,9 +1480,8 @@ function suggest(p){
     let sxy = 0, sxx = 0;
     rows.forEach((r, i) => { sxy += r.w * (days[i] - mx) * (r.proj - mean); sxx += r.w * (days[i] - mx) ** 2; });
     if (sxx > 0){
-      const slope = sxy / sxx, atNow = mean + slope * (0 - mx);
-      const floor = Math.min(...rows.map(r => r.proj)) - 1.5, ceil = mean + 1;
-      const clamped = Math.min(ceil, Math.max(floor, atNow));
+      const sl = sxy / sxx, atNow = mean + sl * (0 - mx);
+      const clamped = Math.min(mean + 1, Math.max(Math.min(...rows.map(r => r.proj)) - 1.5, atNow));
       if (Math.abs(clamped - mean) >= 0.2){ target = clamped; trend = true; }
     }
   }
@@ -1307,9 +1490,12 @@ function suggest(p){
   const matches = rows.filter(r => r.exact).sort((a, b) => b.pt.t - a.pt.t);
   const best = matches.length ? matches.reduce((a, r) => r.pt.split < a.pt.split ? r : a) : null;
   const maxSim = Math.max(...rows.map(r => r.sim));
+  const nearRate = !p.rate || pts.some(x => x.rate && Math.abs(x.rate - p.rate) <= 2);
+  const [lo, hi] = BAND_RATE[p.band];
   return {
     target, trend, faster: target < mean, lo: target - half, hi: target + half, matches, best, last: matches[0] || null,
-    basis: matches.length ? 'match' : (maxSim > 0.55 ? 'similar' : 'far'),
+    basis: matches.length ? 'match' : (maxSim > 0.55 ? 'similar' : 'far'), cont: p.type === 'intervals' && cont,
+    unusual: p.rate && (p.rate < lo - 2 || p.rate > hi + 2), nearRate, slopeFrom: (p.rate ? slopeFrom : null),
     top: rows.sort((a, b) => b.w - a.w).slice(0, 3), count: rows.length
   };
 }
@@ -1321,12 +1507,14 @@ function renderPlans(){
     return;
   }
   box.innerHTML = plans.map(p => {
-    const sg = suggest(p);
-    const aim = sg && !sg.none ? `Aim for <b>${esc(fmtSplit(sg.target))}</b> /500m` : 'No target yet';
+    const sg = suggest(p), b = BANDS.includes(p.band) ? p.band : null;
+    const aim = !sg ? 'Not complete' : sg.noband ? 'Choose a band to get a target'
+      : sg.none ? `No ${b} sessions to base a target on yet`
+      : `Aim for <b>${esc(fmtSplit(sg.target))}</b> /500m${p.rate ? ` at r${p.rate}` : ''}`;
     const rest = p.type === 'intervals' && p.rest ? `<span class="plan-rest">${esc(fmtTime(p.rest))} rest</span>` : '';
     return `<div class="plan">
-      <button class="plan-open" data-plan="${esc(p.id)}"><div class="plan-title"><i class="dotk ${p.type}"></i>${esc(planTitle(p))}${rest}</div><div class="plan-sub">${aim}</div></button>
-      <button class="log-it ${p.type}" data-log="${esc(p.id)}">Log it</button>
+      <button class="plan-open" data-plan="${esc(p.id)}"><div class="plan-title">${b ? `<span class="plan-band" style="--bc:var(--${b})">${b}</span>` : ''}${esc(planTitle(p))}${rest}</div><div class="plan-sub">${aim}</div></button>
+      <button class="log-it" style="--bc:var(--${b || 'UT2'})" data-log="${esc(p.id)}">Log it</button>
       <button class="plan-x" data-rmplan="${esc(p.id)}" aria-label="Remove plan">${ICON.x}</button>
     </div>`;
   }).join('');
@@ -1340,7 +1528,7 @@ $('#plansList').addEventListener('click', e => {
 
 let plan = null;
 function openPlanner(existing){
-  plan = existing ? { ...existing } : { id: uid(), type: 'intervals', mode: 'd', n: null, value: null, rest: null };
+  plan = existing ? { ...existing } : { id: uid(), type: 'intervals', mode: 'd', n: null, value: null, rest: null, rate: null, band: null };
   $('#plTitle').textContent = existing ? 'Edit plan' : 'Plan a session';
   renderPlanner(); showSheet('#planner');
 }
@@ -1349,9 +1537,14 @@ function renderPlanner(){
   const valField = plan.mode === 'd'
     ? `<div class="field"><label for="pl-value"><span>${isI ? 'Each piece' : 'Distance'}</span><i>m</i></label><input class="in" id="pl-value" data-k="value" data-kind="int" autocomplete="off"></div>`
     : `<div class="field"><label for="pl-value"><span>${isI ? 'Each piece' : 'Time'}</span></label><input class="in" id="pl-value" data-k="value" data-kind="time" autocomplete="off"></div>`;
-  let h = `<div class="seg" role="group" aria-label="Session type">
-      <button data-ptype="steady" aria-pressed="${!isI}"><i class="dotk steady"></i>Steady state</button>
-      <button data-ptype="intervals" aria-pressed="${isI}"><i class="dotk intervals"></i>Intervals</button>
+  const rateField = `<div class="field"><label for="pl-rate"><span>Rate</span><i>s/m</i></label><input class="in" id="pl-rate" data-k="rate" data-kind="int" autocomplete="off"></div>`;
+  let h = `<div class="seg" role="group" aria-label="Format">
+      <button data-ptype="steady" aria-pressed="${!isI}">One piece</button>
+      <button data-ptype="intervals" aria-pressed="${isI}">Pieces</button>
+    </div>
+    <div class="group">
+      <div class="band-head"><h3>Training band</h3><button type="button" class="help" data-help aria-label="What the bands mean">?</button></div>
+      ${bandsHTML(plan.band, 'data-plband')}
     </div>
     <div class="group"><h3>Session</h3>
       <div class="mini-seg" role="group" aria-label="Set by">
@@ -1362,13 +1555,15 @@ function renderPlanner(){
         <div class="field"><label for="pl-n"><span>Pieces</span></label><input class="in" id="pl-n" data-k="n" data-kind="int" autocomplete="off"></div>
         ${valField}
         <div class="field"><label for="pl-rest"><span>Rest</span></label><input class="in" id="pl-rest" data-k="rest" data-kind="time" autocomplete="off"></div>
-      </div>` : `<div class="grid2">${valField}</div>`}
+        ${rateField}
+      </div>` : `<div class="grid2">${valField}${rateField}</div>`}
     </div>
     <div id="suggest"></div>`;
   $('#plBody').innerHTML = h;
   $('#plBody').querySelectorAll('[data-k]').forEach(inp => setInput(inp, plan[inp.dataset.k]));
   $('#plBody').querySelectorAll('[data-ptype]').forEach(b => b.addEventListener('click', () => { readPlan(); plan.type = b.dataset.ptype; renderPlanner(); }));
   $('#plBody').querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => { readPlan(); if (plan.mode !== b.dataset.mode){ plan.mode = b.dataset.mode; plan.value = null; } renderPlanner(); }));
+  $('#plBody').querySelectorAll('[data-plband]').forEach(b => b.addEventListener('click', () => { readPlan(); plan.band = b.dataset.plband; renderPlanner(); }));
   renderSuggest();
 }
 function readPlan(){
@@ -1376,32 +1571,40 @@ function readPlan(){
 }
 function renderSuggest(){
   const box = $('#suggest'); if (!box) return;
-  const kind = plan.type === 'intervals' ? 'interval' : 'steady state';
-  if (!planComplete(plan)){ box.innerHTML = `<div class="suggest"><p class="sg-empty">Enter the session above to see a target split.</p></div>`; return; }
+  const msg = t => { box.innerHTML = `<div class="suggest"><p class="sg-empty">${t}</p></div>`; };
+  if (!BANDS.includes(plan.band)) return msg('Choose a training band, then enter the session to see a target split.');
+  if (!planComplete(plan)) return msg('Enter the session above to see a target split.');
   const sg = suggest(plan);
-  if (sg.none){ box.innerHTML = `<div class="suggest"><p class="sg-empty">There are no ${kind} sessions in your log yet. Targets are worked out from your own history, so log one first.</p></div>`; return; }
+  if (sg.none) return msg(`There are no ${plan.band} sessions in your log yet. Targets come from your own sessions in the same band, so log one first.`);
   let each;
   if (plan.mode === 'd') each = `Each ${esc(fmtDist(plan.value))} in <b>${esc(fmtTime(sg.target * plan.value / 500))}</b>`;
   else each = `About <b>${esc(fmtDist(Math.round(plan.value / sg.target * 500)))}</b> per ${esc(fmtTime(plan.value))}`;
-  if (plan.type === 'steady') each = each.replace(/^Each /, 'Finish ').replace(/^About /, 'About ').replace(' per ', ' in ');
+  if (plan.type === 'steady') each = each.replace(/^Each /, 'Finish ').replace(' per ', ' in ');
   const fmtDay = r => { const d = new Date(r.pt.t); return `${d.getDate()} ${MO[d.getMonth()].slice(0, 3)}`; };
   let facts = '';
   if (sg.last) facts = `<div class="sg-facts">
       <div><b>${esc(fmtSplit(sg.last.pt.split))}</b><span>last time, ${fmtDay(sg.last)}</span></div>
       <div><b>${esc(fmtSplit(sg.best.pt.split))}</b><span>best, ${fmtDay(sg.best)}</span></div></div>`;
-  const basis = sg.basis === 'match'
-    ? `Based mostly on ${sg.matches.length} previous ${sg.matches.length === 1 ? 'time' : 'times'} you’ve done this session, weighted towards recent ones.`
+  let basis = sg.basis === 'match'
+    ? `Based mostly on ${sg.matches.length} previous ${sg.matches.length === 1 ? 'time' : 'times'} you’ve done this session at a similar rate, weighted towards recent ones.`
     : sg.basis === 'similar'
-      ? `You haven’t done this exact session, so this scales your recent ${kind} sessions using Paul’s Law (about 5s per 500m slower each time the distance doubles).`
-      : `Your log has nothing close to this length, so this is a rough estimate scaled from quite different ${kind} sessions using Paul’s Law. Treat it as a starting point.`;
+      ? `You haven’t done this exact session, so this uses your recent ${plan.band} sessions, scaled to this length with Paul’s Law (about 5s per 500m slower each time the distance doubles).`
+      : `Your ${plan.band} sessions are a long way from this length, so this is a rough estimate scaled with Paul’s Law. Treat it as a starting point.`;
+  if (sg.cont) basis += ' The rest is short enough that the pieces are treated as one continuous piece.';
+  if (sg.slopeFrom === 'band') basis += ` It’s adjusted to r${plan.rate} using how your ${plan.band} split changes with rate.`;
+  else if (sg.slopeFrom === 'all') basis += ` It’s adjusted to r${plan.rate} using how your split changes with rate across all your sessions.`;
   const trendNote = sg.trend ? (sg.faster ? ' Your splits have been getting quicker, so the target follows that trend.' : ' Your recent splits have been slower, so the target allows for that.') : '';
-  const list = sg.top.map(r => `<li><span>${fmtDay(r)}, ${esc(titleOf(r.pt.s))}</span><span>${esc(fmtSplit(r.pt.split))}</span></li>`).join('');
+  const flags = [];
+  if (sg.unusual) flags.push(`r${plan.rate} is unusual for ${plan.band}, which is usually rowed at r${BAND_RATE[plan.band][0]}–${BAND_RATE[plan.band][1]}.`);
+  if (plan.rate && !sg.nearRate) flags.push(`You haven’t logged ${plan.band} work near r${plan.rate}, so the rate adjustment is a rough guide.`);
+  const list = sg.top.map(r => `<li><span>${fmtDay(r)}, ${esc(titleOf(r.pt.s))}${r.pt.rate ? `, r${Math.round(r.pt.rate)}` : ''}</span><span>${esc(fmtSplit(r.pt.split))}</span></li>`).join('');
   box.innerHTML = `<div class="suggest">
     <div class="sg-head">Aim for</div>
-    <div class="sg-split ${plan.type}"><div class="big">${esc(fmtSplit(sg.target))}</div><span>/500m</span></div>
+    <div class="sg-split" style="--bc:var(--${plan.band})"><div class="big">${esc(fmtSplit(sg.target))}</div><span>/500m${plan.rate ? ` at r${plan.rate}` : ''}</span></div>
     <p class="sg-line">${each}</p>
     <p class="sg-line" style="color:var(--muted)">Range ${esc(fmtSplit(sg.lo))} to ${esc(fmtSplit(sg.hi))}</p>
     ${facts}
+    ${flags.map(f => `<p class="flag">${f}</p>`).join('')}
     <p class="sg-basis">${basis}${trendNote}</p>
     <ul class="sg-list">${list}</ul>
   </div>`;
@@ -1413,13 +1616,16 @@ const TESTS = [
   { id: '30', name: '30 minutes', t: 1800 }, { id: '30r20', name: '30 minutes at rate 20', t: 1800, r20: true },
   { id: '60', name: '60 minutes', t: 3600 }, { id: 'hm', name: 'Half marathon', d: 21097 }
 ];
+// test: flat-out test pieces. hard: TR and AN work (never UT2, UT1 or AT). r20: any work at rate 20 or under.
 function anchors(kind){
   return sessions.filter(s => kind === 'test' ? (s.type === 'steady' && s.test)
-      : kind === 'r20' ? (s.type === 'steady' && !s.test) : s.type === 'intervals').map(s => {
+      : kind === 'r20' ? !s.test : (!s.test && ['TR', 'AN'].includes(bandOf(s)))).map(s => {
     const sum = summarise(s); if (!sum.split || !sum.distance) return null;
     if (kind === 'r20' && !(sum.rate && sum.rate <= 20.5)) return null;
-    const n = kind === 'test' || kind === 'r20' ? 1 : Math.max(1, (s.pieces || []).length);
-    return { s, d: sum.distance / n, split: sum.split, time: sum.time, t: parseDate(s.date).getTime() };
+    const e = kind === 'test' ? { d: sum.distance, n: 1 } : effPiece(s, sum);
+    // Rate-capped work in pieces counts, but less than a continuous piece
+    const wt = kind === 'r20' && e.n > 1 ? 0.5 : 1;
+    return { s, d: e.d, split: sum.split, time: sum.time, t: parseDate(s.date).getTime(), wt };
   }).filter(Boolean);
 }
 function project(list, test, halfLife){
@@ -1430,7 +1636,7 @@ function project(list, test, halfLife){
     if (test.d) proj = a.split + PAUL * log2(test.d / a.d);
     else for (let i = 0; i < 4; i++){ dT = test.t / proj * 500; proj = a.split + PAUL * log2(dT / a.d); }
     const gap = Math.abs(log2(dT / a.d));
-    const w = Math.pow(0.5, Math.max(0, (now - a.t) / 864e5) / halfLife) * Math.exp(-gap);
+    const w = Math.pow(0.5, Math.max(0, (now - a.t) / 864e5) / halfLife) * Math.exp(-gap) * (a.wt || 1);
     W += w; S += w * proj; nearest = Math.min(nearest, gap); rows.push({ a, w });
   });
   const split = S / W;
@@ -1450,7 +1656,7 @@ function bestActual(test){
 }
 function predictAll(){
   const tests = anchors('test'), source = tests.length ? 'test' : 'training';
-  const base = tests.length ? tests : anchors('intervals');
+  const base = tests.length ? tests : anchors('hard');
   const r20 = anchors('r20');
   const results = TESTS.map(t => {
     const p = t.r20 ? project(r20, t, 42) : project(base, t, source === 'test' ? 90 : 42), best = bestActual(t);
@@ -1475,26 +1681,26 @@ function renderPredict(){
   const fmtDay = ms => { const d = new Date(ms); return `${d.getDate()} ${MO[d.getMonth()].slice(0, 3)}`; };
   let h = '';
   if (!all.count){
-    h = `<p class="pr-note">There’s nothing to predict from yet. Log an interval session, or tick “Flat-out test piece” when you log a test, and your predictions will appear here.</p>`;
+    h = `<p class="pr-note">There’s nothing to predict from yet. Predictions use flat-out test pieces first, then TR and AN work, never easier bands. Log one of those and your predictions will appear here.</p>`;
     $('#prBody').innerHTML = h; return;
   }
   const two = byId('2k');
   h += `<div class="pr-hero"><div class="lbl">2k</div><div class="big">${esc(fmtSplit(two.p.time))}</div>
     <div class="sub"><b>${esc(fmtSplit(two.p.split))}</b> /500m${two.best ? `, best <b>${esc(fmtSplit(two.best.time))}</b> on ${fmtDay(parseDate(two.best.s.date))}` : ''}</div></div>`;
-  if (all.source === 'training') h += `<p class="pr-note">You haven’t logged a test piece yet, so these come from your interval training. Training pieces aren’t flat out, so these are likely slower than you’d manage in a real test. Tick “Flat-out test piece” when you log a test to sharpen them.</p>`;
+  if (all.source === 'training') h += `<p class="pr-note">You haven’t logged a test piece yet, so these come from your TR and AN pieces. Training pieces aren’t flat out, so these are likely slower than you’d manage in a real test. Tick “Flat-out test piece” when you log a test to sharpen them.</p>`;
   h += `<div class="pr-list">`;
   all.results.forEach(({ t, p, best }) => {
     if (t.id === '2k') return;
     let val, sub, meta;
     if (!p){
       val = '—'; sub = '';
-      meta = t.r20 ? 'Log a steady session at rate 20 or under to predict this' : 'Not enough data yet';
+      meta = t.r20 ? 'Log a session at rate 20 or under to predict this' : 'Not enough data yet';
     } else if (t.d){
       val = fmtSplit(p.time); sub = t.d === 500 ? '' : `${fmtSplit(p.split)} /500m`;
       meta = `<i class="conf ${p.conf}"></i>${CONF[p.conf]}`;
     } else {
       val = fmtDist(Math.round(p.dist)); sub = `${fmtSplit(p.split)} /500m`;
-      meta = `<i class="conf ${p.conf}"></i>${t.r20 ? 'from your steady sessions at rate 20 or under' : CONF[p.conf]}`;
+      meta = `<i class="conf ${p.conf}"></i>${t.r20 ? 'from your work at rate 20 or under' : CONF[p.conf]}`;
     }
     if (best) meta += `<br><span class="pr-pb">Best ${esc(t.d ? fmtSplit(best.time) : fmtDist(best.dist))}</span>, ${fmtDay(parseDate(best.s.date))}`;
     h += `<div class="pr-row"><div><div class="pr-name">${esc(t.name)}</div><div class="pr-meta">${meta}</div></div>
@@ -1505,8 +1711,8 @@ function renderPredict(){
   h += `<div class="group"><h3>How these are worked out</h3><div class="suggest" style="padding:16px 18px">
     <p class="sg-empty" style="color:var(--ink)">${all.source === 'test'
       ? `Each prediction scales your ${all.count} test ${all.count === 1 ? 'piece' : 'pieces'} to the new distance using Paul’s Law (about 5s per 500m slower each time the distance doubles), giving more weight to recent tests and to tests close in length.`
-      : `Each prediction scales your interval pieces to the new distance using Paul’s Law (about 5s per 500m slower each time the distance doubles), giving more weight to recent sessions and to pieces close in length.`}
-      The 30 minutes at rate 20 prediction uses only your steady sessions rowed at rate 20 or under.</p>
+      : `Each prediction scales your TR and AN pieces to the new distance using Paul’s Law (about 5s per 500m slower each time the distance doubles), giving more weight to recent sessions and to pieces close in length.`}
+      The 30 minutes at rate 20 prediction uses any of your work rowed at rate 20 or under, with pieces counting for less than continuous rows.</p>
     <p class="sg-basis">Sessions counting most towards your 2k</p>
     <ul class="sg-list">${used}</ul></div></div>`;
   $('#prBody').innerHTML = h;
@@ -1518,11 +1724,41 @@ $('#planBtn').addEventListener('click', () => openPlanner(null));
 $('#plClose').addEventListener('click', () => { plan = null; hideSheet('#planner'); });
 $('#plSave').addEventListener('click', () => {
   readPlan();
+  if (!BANDS.includes(plan.band)){ toast('Choose a training band.'); return; }
   if (!planComplete(plan)){ toast(plan.type === 'intervals' ? 'Add the number of pieces and their length.' : 'Add a distance or time.'); return; }
   if (plan.type === 'steady'){ plan.n = 1; plan.rest = null; }
   const i = plans.findIndex(p => p.id === plan.id);
   if (i >= 0) plans[i] = plan; else plans.push(plan);
   savePlans(); hideSheet('#planner'); renderPlans(); toast(i >= 0 ? 'Plan updated' : 'Plan saved'); plan = null;
+});
+
+/* ================= Band review ================= */
+let reviewPicks = {};
+function openReview(){
+  const list = sessions.filter(s => !BANDS.includes(s.band));
+  reviewPicks = {}; list.forEach(s => { reviewPicks[s.id] = guessBand(s); });
+  const fmtDay = d => `${WD[d.getDay()]} ${d.getDate()} ${MO[d.getMonth()].slice(0, 3)}${d.getFullYear() !== new Date().getFullYear() ? ` ${d.getFullYear()}` : ''}`;
+  $('#rvBody').innerHTML = `<p class="sg-empty" style="margin:0">Each session has a guessed band based on its rate and split. Change any that are wrong, then save.</p>
+    <div>${list.map(s => {
+      const sum = summarise(s);
+      return `<div class="rv" data-rv="${esc(s.id)}">
+        <div class="rv-top"><b>${esc(titleOf(s))}</b><span>${fmtDay(parseDate(s.date))}</span></div>
+        <div class="rv-sub">${[sum.split && `${fmtSplit(sum.split)} /500m`, sum.rate && `r${Math.round(sum.rate)}`, s.test && 'test piece'].filter(Boolean).map(esc).join(', ')}</div>
+        ${bandsHTML(reviewPicks[s.id], 'data-rvband')}
+      </div>`; }).join('')}</div>`;
+  showSheet('#review');
+}
+$('#rvBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-rvband]'); if (!b) return;
+  const card = b.closest('[data-rv]'); reviewPicks[card.dataset.rv] = b.dataset.rvband;
+  card.querySelectorAll('[data-rvband]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+});
+$('#reviewBtn').addEventListener('click', openReview);
+$('#rvClose').addEventListener('click', () => hideSheet('#review'));
+$('#rvSave').addEventListener('click', async () => {
+  const ids = Object.keys(reviewPicks);
+  for (const id of ids){ const s = sessions.find(x => x.id === id); if (s){ s.band = reviewPicks[id]; s.bandGuessed = false; s.updated = Date.now(); await DB.put('sessions', s); } }
+  await load(); hideSheet('#review'); renderHome(); toast(`Saved bands for ${ids.length} session${ids.length === 1 ? '' : 's'}`);
 });
 
 let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(renderChart, 120); });
