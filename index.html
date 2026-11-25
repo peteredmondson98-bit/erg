@@ -1,0 +1,1543 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Erg</title>
+<meta name="theme-color" content="#EEF1F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121735" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Erg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F8; --surface:#FFFFFF; --ink:#141933; --muted:#646A8A; --line:#D3D9E8; --track:#E1E5F0;
+  --steady:#2B44E6; --intv:#D98200; --on-steady:#FFFFFF; --danger:#C8323C;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121735; --surface:#1B2148; --ink:#EEF0FB; --muted:#959BC2; --line:#2E3668; --track:#272E5E;
+    --steady:#8C99FF; --intv:#FFC23D; --on-steady:#121735; --danger:#FF7A80;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121735; --surface:#1B2148; --ink:#EEF0FB; --muted:#959BC2; --line:#2E3668; --track:#272E5E;
+  --steady:#8C99FF; --intv:#FFC23D; --on-steady:#121735; --danger:#FF7A80;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  font-variant-numeric:tabular-nums;
+}
+body.locked{overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--steady);outline-offset:3px}
+[hidden]{display:none !important}
+
+/* ---------- Home ---------- */
+.home{max-width:460px;margin:0 auto;padding:20px 22px 132px;display:flex;flex-direction:column;gap:18px}
+.masthead{display:flex;justify-content:space-between;align-items:baseline}
+.wordmark{font-size:1.35rem;font-weight:780;letter-spacing:-.02em;margin:0}
+.mast-right{display:flex;align-items:center;gap:6px}
+.today{color:var(--muted);font-size:.98rem}
+.more{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.more svg{width:20px;height:20px}
+.menu-wrap{position:relative}
+.menu{position:absolute;right:0;top:42px;z-index:5;background:var(--surface);border-radius:18px;padding:6px;min-width:230px;box-shadow:0 14px 40px color-mix(in srgb,var(--ink) 18%,transparent)}
+.menu button{display:flex;flex-direction:column;align-items:flex-start;width:100%;padding:12px 14px;border-radius:12px;text-align:left}
+.menu button:hover{background:var(--bg)}
+.menu .t{font-weight:640}
+.menu .s{color:var(--muted);font-size:.86rem}
+
+.banner{display:flex;justify-content:space-between;align-items:center;gap:12px;background:color-mix(in srgb,var(--intv) 16%,var(--surface));border-radius:18px;padding:12px 16px;font-size:.95rem}
+.banner button{font-weight:680;color:var(--ink);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:6px 2px 0}
+.big{display:flex;align-items:baseline;font-size:clamp(3.4rem,17vw,5.6rem);font-weight:780;line-height:.86;letter-spacing:-.06em;font-variation-settings:"opsz" 96}
+.big small{font-size:.32em;letter-spacing:0;margin-left:.12em;color:var(--muted);font-weight:650}
+.hero-label{margin-top:10px;font-size:1.1rem;font-weight:600}
+.hero-side{text-align:right;padding-bottom:4px}
+.hero-side b{display:block;font-size:1.7rem;font-weight:720;letter-spacing:-.03em;line-height:1}
+.hero-side span{color:var(--muted);font-size:.92rem}
+
+.weeks{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;align-items:end;height:52px}
+.weeks i{display:block;border-radius:6px 6px 3px 3px;background:color-mix(in srgb,var(--steady) 38%,var(--track));min-height:4px;transform-origin:bottom;animation:grow .7s cubic-bezier(.2,.9,.25,1) both}
+.weeks i.zero{background:var(--track)}
+.weeks i.now{background:var(--steady)}
+@keyframes grow{from{transform:scaleY(0)}}
+.weeks-cap{display:flex;justify-content:space-between;color:var(--muted);font-size:.88rem;margin-top:8px}
+.weeks-cap b{color:var(--ink);font-weight:650}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:var(--surface);font-weight:620;font-size:.95rem;transition:background-color .2s,color .2s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.dotk{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.dotk.steady{background:var(--steady)}
+.dotk.intervals{background:var(--intv)}
+
+.panel{background:var(--surface);border-radius:24px;padding:18px 18px 16px}
+.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 10px}
+.panel-title{margin:0;font-size:1.05rem;font-weight:680}
+.panel-meta{color:var(--muted);font-size:.88rem;text-align:right}
+.chart{width:100%;display:block;overflow:visible}
+.chart text{fill:var(--muted);font-family:inherit;font-size:12px}
+.chart .grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+.chart .hit{fill:transparent;cursor:pointer}
+.chart-empty{color:var(--muted);margin:8px 0 6px;font-size:.98rem}
+
+.month{background:var(--surface);border-radius:24px;padding:6px 8px}
+.month-head{display:flex;justify-content:space-between;align-items:baseline;padding:14px 10px 6px}
+.month-head h2{margin:0;font-size:1.25rem;font-weight:740;letter-spacing:-.02em}
+.month-head span{color:var(--muted);font-size:.88rem}
+.row{display:grid;grid-template-columns:44px 1fr 76px;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 10px;border-radius:16px}
+.row + .row{border-top:1px solid var(--line);border-radius:0 0 16px 16px}
+.row:hover{background:color-mix(in srgb,var(--bg) 60%,var(--surface))}
+.d-num{font-size:1.55rem;font-weight:740;letter-spacing:-.03em;line-height:1}
+.d-wd{color:var(--muted);font-size:.82rem;margin-top:2px}
+.r-title{font-weight:680;font-size:1.04rem;display:flex;align-items:center;gap:6px;min-width:0}
+.r-title span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r-title svg{width:15px;height:15px;flex:none;color:var(--muted)}
+.r-sub{color:var(--muted);font-size:.9rem;margin-top:3px;display:flex;gap:12px;flex-wrap:wrap}
+.r-sub b{color:var(--ink);font-weight:620}
+.sig{width:76px;height:34px;display:block}
+
+.empty{text-align:left;padding:22px 20px}
+.empty h2{margin:0 0 6px;font-size:1.3rem;font-weight:720}
+.empty p{margin:0 0 16px;color:var(--muted);line-height:1.45}
+.ghost{padding:11px 16px;border-radius:999px;background:var(--bg);font-weight:650}
+
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:4;padding:18px 22px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 62%,color-mix(in srgb,var(--bg) 0%,transparent))}
+.primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:416px;margin:0 auto;height:60px;border-radius:999px;background:var(--steady);color:var(--on-steady);font-size:1.12rem;font-weight:720;letter-spacing:-.01em;transition:transform .15s}
+.primary:active{transform:scale(.98)}
+.primary svg{width:20px;height:20px}
+
+/* ---------- Sheets ---------- */
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;animation:rise .38s cubic-bezier(.2,.85,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}}
+.sheet-bar{position:sticky;top:0;z-index:3;background:var(--bg);padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px}
+.sheet-bar-in{max-width:460px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--surface)}
+.icon-btn svg{width:20px;height:20px}
+.text-btn{padding:10px 16px;border-radius:999px;background:var(--surface);font-weight:650}
+.sheet-title{font-weight:700;font-size:1.05rem}
+.sheet-body{max-width:460px;margin:0 auto;padding:6px 22px calc(130px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:20px}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--track);border-radius:999px;padding:4px}
+.seg button{height:46px;border-radius:999px;font-weight:680;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);transition:background-color .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 2px 10px color-mix(in srgb,var(--ink) 8%,transparent)}
+
+.group h3{margin:0 0 10px;font-size:1.05rem;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+.group h3 span{color:var(--muted);font-weight:500;font-size:.88rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{display:flex;justify-content:space-between;color:var(--muted);font-size:.84rem;font-weight:560}
+.field label i{font-style:normal;opacity:.8}
+.in{width:100%;min-width:0;border:1.5px solid transparent;background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 13px;font:inherit;font-size:1.12rem;font-weight:640;font-variant-numeric:tabular-nums;transition:border-color .15s}
+.in:focus{outline:none;border-color:var(--steady)}
+.in::placeholder{color:color-mix(in srgb,var(--muted) 55%,transparent);font-weight:500}
+.in.calc::placeholder{color:var(--steady);opacity:.85;font-weight:640}
+.in.bad{border-color:var(--danger)}
+.piece .in{font-size:1.02rem;padding:10px 11px;background:var(--bg)}
+textarea.in{min-height:96px;resize:vertical;font-size:1rem;font-weight:500;line-height:1.45}
+input[type="datetime-local"].in{font-size:1rem}
+
+.piece{background:var(--surface);border-radius:20px;padding:12px 14px 14px}
+.piece + .piece{margin-top:10px}
+.piece-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.piece-head b{font-weight:700}
+.piece-head button{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.piece-head svg{width:16px;height:16px}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.add{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:999px;background:var(--surface);font-weight:650}
+.add svg{width:16px;height:16px}
+.add.accent{background:color-mix(in srgb,var(--intv) 20%,var(--surface))}
+.add.accent.st{background:color-mix(in srgb,var(--steady) 14%,var(--surface))}
+
+.summary{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-radius:20px;padding:14px 6px}
+.summary div{text-align:center}
+.summary b{display:block;font-size:1.25rem;font-weight:720;letter-spacing:-.02em}
+.summary span{color:var(--muted);font-size:.82rem}
+
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ph{position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;background:var(--track)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph button.x{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,#000 55%,transparent);color:#fff;display:grid;place-items:center}
+.ph button.x svg{width:14px;height:14px}
+.ph-add{aspect-ratio:1;border-radius:16px;border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-weight:620;font-size:.9rem}
+.ph-add svg{width:24px;height:24px}
+
+.form-error{color:var(--danger);font-weight:600;text-align:center;margin:0}
+
+/* ---------- Detail ---------- */
+.dt-date{color:var(--muted);font-size:.98rem}
+.dt-title{margin:4px 0 0;font-size:clamp(1.9rem,8.5vw,2.5rem);font-weight:780;letter-spacing:-.035em;line-height:1.02}
+.tag{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-weight:620;font-size:.92rem;color:var(--muted)}
+.dt-split{display:flex;align-items:baseline;gap:10px}
+.dt-split .big{font-size:clamp(4rem,22vw,6.2rem)}
+.dt-split span{color:var(--muted);font-size:1.05rem;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px;background:var(--surface);border-radius:24px;padding:18px}
+.stats b{display:block;font-size:1.3rem;font-weight:720;letter-spacing:-.02em}
+.stats span{color:var(--muted);font-size:.84rem}
+.splits .sp{display:grid;grid-template-columns:22px 1fr auto;gap:4px 12px;align-items:center;padding:10px 0}
+.splits .sp + .sp{border-top:1px solid var(--line)}
+.sp-n{color:var(--muted);font-weight:650;font-size:.92rem}
+.sp-main b{font-size:1.25rem;font-weight:720;letter-spacing:-.02em}
+.sp-main span{color:var(--muted);font-size:.88rem;margin-left:8px}
+.sp-side{text-align:right;color:var(--muted);font-size:.88rem;line-height:1.35}
+.sp-side b{color:var(--ink);font-weight:620}
+.sp-bar{grid-column:2 / 4;height:7px;border-radius:99px;background:var(--track);overflow:hidden}
+.sp-bar i{display:block;height:100%;border-radius:99px;background:var(--steady);transform-origin:left;animation:fill .6s cubic-bezier(.2,.9,.25,1) both}
+.sp-bar.intervals i{background:var(--intv)}
+.sp-bar i.best{filter:saturate(1.3)}
+@keyframes fill{from{transform:scaleX(0)}}
+.sp-rest{grid-column:2 / 4;color:var(--muted);font-size:.82rem;margin-top:-2px}
+.best-tag{font-size:.78rem;font-weight:700;color:var(--intv);margin-left:6px}
+.notes{white-space:pre-wrap;line-height:1.5;margin:0;background:var(--surface);border-radius:20px;padding:16px 18px}
+.danger{width:100%;height:54px;border-radius:999px;background:var(--surface);color:var(--danger);font-weight:700}
+.danger.armed{background:var(--danger);color:#fff}
+
+.lightbox{position:fixed;inset:0;z-index:40;background:rgba(5,7,20,.94);display:flex;align-items:center;justify-content:center;padding:calc(60px + env(safe-area-inset-top,0px)) 12px calc(20px + env(safe-area-inset-bottom,0px))}
+.lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px}
+.lightbox button{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:14px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center}
+.lightbox svg{width:20px;height:20px}
+
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:100000;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font-weight:620;font-size:.95rem;animation:rise .3s ease both;max-width:calc(100% - 40px);text-align:center}
+
+/* ---------- Plans ---------- */
+.plan-add{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;background:var(--bg);font-weight:650;font-size:.92rem}
+.plan-add svg{width:14px;height:14px}
+.plan{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:12px 0}
+.plan + .plan{border-top:1px solid var(--line)}
+.plan-open{text-align:left;min-width:0}
+.plan-title{font-weight:680;font-size:1.04rem;display:flex;align-items:center;gap:8px}
+.plan-sub{color:var(--muted);font-size:.9rem;margin-top:3px}
+.plan-rest{color:var(--muted);font-weight:500;font-size:.9rem}
+.plan-sub b{color:var(--ink);font-weight:680}
+.log-it{padding:9px 14px;border-radius:999px;font-weight:680;font-size:.92rem;background:color-mix(in srgb,var(--steady) 14%,var(--surface))}
+.log-it.intervals{background:color-mix(in srgb,var(--intv) 22%,var(--surface))}
+.plan-x{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.plan-x svg{width:15px;height:15px}
+.mini-seg{display:inline-grid;grid-template-columns:1fr 1fr;background:var(--track);border-radius:999px;padding:3px;margin-bottom:12px}
+.mini-seg button{padding:7px 16px;border-radius:999px;font-weight:650;font-size:.92rem;color:var(--muted)}
+.mini-seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
+.suggest{background:var(--surface);border-radius:24px;padding:20px}
+.sg-head{color:var(--muted);font-weight:600}
+.sg-split{display:flex;align-items:baseline;gap:10px;margin:6px 0 4px}
+.sg-split .big{font-size:clamp(3.6rem,19vw,5.4rem);color:var(--steady)}
+.sg-split.intervals .big{color:var(--intv)}
+.sg-split span{color:var(--muted);font-weight:600}
+.sg-line{margin:2px 0;font-size:1rem}
+.sg-line b{font-weight:680}
+.sg-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0 4px;padding-top:14px;border-top:1px solid var(--line)}
+.sg-facts b{display:block;font-size:1.2rem;font-weight:720}
+.sg-facts span{color:var(--muted);font-size:.84rem}
+.sg-basis{color:var(--muted);font-size:.9rem;line-height:1.45;margin:14px 0 0}
+.sg-list{margin:10px 0 0;padding:0;list-style:none}
+.sg-list li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:.94rem;border-top:1px solid var(--line)}
+.sg-list li span:last-child{font-weight:650}
+.sg-empty{color:var(--muted);margin:0;line-height:1.45}
+.dt-target{margin-top:-8px;color:var(--muted);font-weight:600}
+.dt-target b{color:var(--ink)}
+.ed-target{background:color-mix(in srgb,var(--steady) 10%,var(--surface));border-radius:18px;padding:12px 16px;font-weight:600}
+.ed-target.intervals{background:color-mix(in srgb,var(--intv) 16%,var(--surface))}
+
+/* ---------- Predictions ---------- */
+.teaser{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;background:var(--surface);border-radius:24px;padding:16px 18px}
+.teaser-label{color:var(--muted);font-weight:600;font-size:.95rem}
+.teaser-val{font-size:2rem;font-weight:760;letter-spacing:-.04em;line-height:1.05;margin-top:2px}
+.teaser-side{display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:620;font-size:.92rem;white-space:nowrap}
+.teaser-side svg{width:18px;height:18px}
+.pr-hero .lbl{color:var(--muted);font-weight:620;font-size:1.05rem}
+.pr-hero .big{margin:6px 0 6px;font-size:clamp(4.2rem,24vw,6.6rem)}
+.pr-hero .sub{color:var(--muted);font-size:1rem}
+.pr-hero .sub b{color:var(--ink);font-weight:680}
+.pr-note{background:color-mix(in srgb,var(--intv) 16%,var(--surface));border-radius:18px;padding:14px 16px;line-height:1.45;margin:0}
+.pr-list{background:var(--surface);border-radius:24px;padding:4px 18px}
+.pr-row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:14px 0}
+.pr-row + .pr-row{border-top:1px solid var(--line)}
+.pr-name{font-weight:680;font-size:1.04rem}
+.pr-meta{color:var(--muted);font-size:.86rem;margin-top:3px;line-height:1.35}
+.pr-val{text-align:right}
+.pr-val b{display:block;font-size:1.45rem;font-weight:740;letter-spacing:-.03em}
+.pr-val span{color:var(--muted);font-size:.86rem}
+.pr-pb{color:var(--intv);font-weight:650}
+.conf{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.conf.good{background:var(--steady)}
+.conf.fair{background:color-mix(in srgb,var(--steady) 45%,var(--track))}
+.conf.rough{background:var(--track);box-shadow:inset 0 0 0 1.5px var(--muted)}
+.switch{display:flex;align-items:center;gap:14px;background:var(--surface);border-radius:18px;padding:14px 16px;cursor:pointer}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+.sw{width:48px;height:28px;border-radius:99px;background:var(--track);position:relative;flex:none;transition:background-color .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s}
+.switch input:checked + .sw{background:var(--steady)}
+.switch input:checked + .sw::after{transform:translateX(20px)}
+.switch input:focus-visible + .sw{outline:3px solid var(--steady);outline-offset:3px}
+.switch small{color:var(--muted);font-size:.86rem}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<main class="home" id="home">
+  <header class="masthead">
+    <h1 class="wordmark">Erg</h1>
+    <div class="mast-right">
+      <div class="today" id="todayLabel"></div>
+      <div class="menu-wrap">
+        <button class="more" id="moreBtn" aria-label="More options" aria-haspopup="menu" aria-expanded="false" aria-controls="menu">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+        </button>
+        <div class="menu" id="menu" role="menu" hidden>
+          <button role="menuitem" id="exportBtn"><span class="t">Export sessions</span><span class="s">Save everything, photos included, as a file</span></button>
+          <button role="menuitem" id="importBtn"><span class="t">Import sessions</span><span class="s">Add sessions from an exported file</span></button>
+        </div>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner" id="sampleBanner" hidden>
+    <span>You’re looking at sample sessions.</span>
+    <button id="clearSample">Remove them</button>
+  </div>
+
+  <section aria-label="This month">
+    <div class="hero">
+      <div>
+        <div class="big" id="monthMetres">0<small>m</small></div>
+        <div class="hero-label" id="monthLabel">metres this month</div>
+      </div>
+      <div class="hero-side">
+        <b id="yearMetres">0</b>
+        <span>metres this year</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Weekly metres">
+    <div class="weeks" id="weeks"></div>
+    <div class="weeks-cap"><span>Last 12 weeks</span><span>This week <b id="weekNow">0m</b></span></div>
+  </section>
+
+  <button class="teaser" id="predictBtn">
+    <div><div class="teaser-label" id="teaserLabel">Predicted 2k</div><div class="teaser-val" id="teaserVal">—</div></div>
+    <span class="teaser-side">All test times<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></span>
+  </button>
+
+  <section class="panel" id="plansPanel" aria-label="Planned sessions" style="padding-bottom:8px">
+    <div class="panel-head" style="align-items:center;margin-bottom:2px">
+      <h2 class="panel-title">Planned</h2>
+      <button class="plan-add" id="planBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Plan session</button>
+    </div>
+    <div id="plansList"></div>
+  </section>
+
+  <div class="chips" role="group" aria-label="Filter sessions">
+    <button class="chip" data-f="all" aria-pressed="true">All</button>
+    <button class="chip" data-f="steady" aria-pressed="false"><i class="dotk steady"></i>Steady state</button>
+    <button class="chip" data-f="intervals" aria-pressed="false"><i class="dotk intervals"></i>Intervals</button>
+  </div>
+
+  <section class="panel" id="chartPanel" aria-label="Average split trend">
+    <div class="panel-head">
+      <h2 class="panel-title">Average split</h2>
+      <span class="panel-meta">Last 12 weeks</span>
+    </div>
+    <div id="chartWrap"></div>
+  </section>
+
+  <div id="timeline" style="display:flex;flex-direction:column;gap:14px"></div>
+
+  <section class="panel empty" id="emptyState" hidden>
+    <h2>No sessions yet</h2>
+    <p>Log your first session from the button below, or load some sample sessions to see how your history will look.</p>
+    <button class="ghost" id="loadSample">Load sample sessions</button>
+  </section>
+</main>
+
+<div class="dock" id="dock">
+  <button class="primary" id="newBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Log session
+  </button>
+</div>
+
+<!-- ================= Editor ================= -->
+<section class="sheet" id="editor" hidden aria-label="Session editor">
+  <div class="sheet-bar"><div class="sheet-bar-in">
+    <button class="icon-btn" id="edClose" aria-label="Close without saving"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="sheet-title" id="edTitle">New session</span>
+    <span style="width:42px"></span>
+  </div></div>
+  <div class="sheet-body" id="edBody"></div>
+  <div class="dock"><button class="primary" id="edSave">Save session</button></div>
+</section>
+
+<!-- ================= Predictions ================= -->
+<section class="sheet" id="predict" hidden aria-label="Predicted test times">
+  <div class="sheet-bar"><div class="sheet-bar-in">
+    <button class="icon-btn" id="prClose" aria-label="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span class="sheet-title">Predicted test times</span>
+    <span style="width:42px"></span>
+  </div></div>
+  <div class="sheet-body" id="prBody"></div>
+</section>
+
+<!-- ================= Planner ================= -->
+<section class="sheet" id="planner" hidden aria-label="Plan a session">
+  <div class="sheet-bar"><div class="sheet-bar-in">
+    <button class="icon-btn" id="plClose" aria-label="Close without saving"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="sheet-title" id="plTitle">Plan a session</span>
+    <span style="width:42px"></span>
+  </div></div>
+  <div class="sheet-body" id="plBody"></div>
+  <div class="dock"><button class="primary" id="plSave">Save plan</button></div>
+</section>
+
+<!-- ================= Detail ================= -->
+<section class="sheet" id="detail" hidden aria-label="Session">
+  <div class="sheet-bar"><div class="sheet-bar-in">
+    <button class="icon-btn" id="dtClose" aria-label="Back to history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="text-btn" id="dtEdit">Edit</button>
+  </div></div>
+  <div class="sheet-body" id="dtBody"></div>
+</section>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button id="lbClose" aria-label="Close photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <img id="lbImg" alt="">
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= Helpers ================= */
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const num = v => (v === null || v === undefined || v === '' || isNaN(v)) ? null : Number(v);
+const pad2 = n => String(n).padStart(2, '0');
+const nf = new Intl.NumberFormat('en-GB');
+const fmtM = m => nf.format(Math.round(m || 0));
+const fmtDist = m => fmtM(m) + 'm';
+
+function fmtClock(sec, tenths = true){
+  if (sec === null || sec === undefined || !isFinite(sec)) return '';
+  const t = Math.round(sec * 10), d = t % 10, S = Math.floor(t / 10);
+  const s = S % 60, M = Math.floor(S / 60), h = Math.floor(M / 60), m = M % 60;
+  const base = h ? `${h}:${pad2(m)}:${pad2(s)}` : `${M}:${pad2(s)}`;
+  return tenths ? `${base}.${d}` : base;
+}
+const fmtSplit = s => fmtClock(s, true);
+const fmtTime = s => { if (s == null) return ''; const str = fmtClock(s, true); return str.endsWith('.0') ? str.slice(0, -2) : str; };
+const splitOf = (time, dist) => (time && dist) ? time / dist * 500 : null;
+const wattsOf = split => split ? 2.80 / Math.pow(split / 500, 3) : null;
+
+/* Time entry: digits fill from the right, so 1452 becomes 1:45.2 */
+function fmtDigits(d){
+  if (!d) return '';
+  const t = d.slice(-1), s = d.slice(-3, -1), m = d.slice(-5, -3), h = d.slice(0, -5);
+  if (d.length <= 1) return '0.' + t;
+  if (d.length <= 3) return `${s}.${t}`;
+  if (d.length <= 5) return `${m}:${s}.${t}`;
+  return `${h}:${m}:${s}.${t}`;
+}
+function digitsToSec(d){
+  if (!d) return null;
+  const p = d.padStart(7, '0');
+  const h = +p.slice(0, 2), m = +p.slice(2, 4), s = +p.slice(4, 6), t = +p[6];
+  if (s >= 60 || (d.length > 5 && m >= 60)) return NaN;
+  return h * 3600 + m * 60 + s + t / 10;
+}
+function secToDigits(sec){
+  if (sec == null || !isFinite(sec)) return '';
+  const t = Math.round(sec * 10), d = t % 10, S = Math.floor(t / 10), s = S % 60, M = Math.floor(S / 60);
+  const str = M >= 60 ? `${Math.floor(M / 60)}${pad2(M % 60)}${pad2(s)}${d}` : `${M}${pad2(s)}${d}`;
+  return str.replace(/^0+/, '');
+}
+
+const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const WDL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MO = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const parseDate = s => new Date(s);
+function localISO(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`; }
+function weekStart(d){ const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return x; }
+
+function toast(msg){
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.setAttribute('role', 'status');
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2600);
+}
+
+const ICON = {
+  cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-label="Has photos"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+  camAdd: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>'
+};
+
+/* ================= Storage (IndexedDB, falls back to memory) ================= */
+const DB = {
+  db: null, mem: { sessions: new Map(), photos: new Map() }, ok: false,
+  init(){
+    return new Promise(res => {
+      try {
+        const req = indexedDB.open('erg-log', 1);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('sessions')) db.createObjectStore('sessions', { keyPath: 'id' });
+          if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' });
+        };
+        req.onsuccess = () => { this.db = req.result; this.ok = true; res(); };
+        req.onerror = () => res();
+      } catch (e) { res(); }
+    });
+  },
+  tx(store, mode, fn){
+    if (!this.ok) return Promise.resolve(fn(null));
+    return new Promise((res, rej) => {
+      try {
+        const t = this.db.transaction(store, mode), s = t.objectStore(store);
+        const r = fn(s);
+        t.oncomplete = () => res(r && 'result' in r ? r.result : undefined);
+        t.onerror = () => rej(t.error);
+      } catch (e) { rej(e); }
+    });
+  },
+  async all(store){
+    if (!this.ok) return [...this.mem[store].values()];
+    return this.tx(store, 'readonly', s => s.getAll());
+  },
+  async get(store, id){
+    if (!this.ok) return this.mem[store].get(id);
+    return this.tx(store, 'readonly', s => s.get(id));
+  },
+  async put(store, obj){
+    if (!this.ok){ this.mem[store].set(obj.id, obj); return; }
+    return this.tx(store, 'readwrite', s => { s.put(obj); return null; });
+  },
+  async del(store, id){
+    if (!this.ok){ this.mem[store].delete(id); return; }
+    return this.tx(store, 'readwrite', s => { s.delete(id); return null; });
+  }
+};
+
+/* ================= Session maths ================= */
+function pieceSplit(p){ return num(p.split) ?? splitOf(num(p.time), num(p.distance)); }
+
+function summarise(s){
+  const out = { distance: null, time: null, split: null, rate: null, hr: null, watts: null };
+  const ps = s.pieces || [];
+  if (s.type === 'intervals'){
+    let d = 0, t = 0, both = true, rw = 0, rt = 0, hw = 0, ht = 0;
+    ps.forEach(p => {
+      const pd = num(p.distance), pt = num(p.time), sp = pieceSplit(p);
+      const dd = pd ?? (pt && sp ? pt / sp * 500 : null);
+      const tt = pt ?? (pd && sp ? sp * pd / 500 : null);
+      if (dd == null || tt == null) both = false;
+      d += dd || 0; t += tt || 0;
+      const w = tt || 1;
+      if (num(p.rate)){ rw += p.rate * w; rt += w; }
+      if (num(p.hr)){ hw += p.hr * w; ht += w; }
+    });
+    out.distance = d || null; out.time = t || null;
+    if (both && d && t) out.split = t / d * 500;
+    else { const sps = ps.map(pieceSplit).filter(Boolean); out.split = sps.length ? sps.reduce((a, b) => a + b, 0) / sps.length : null; }
+    out.rate = num(s.rate) ?? (rt ? rw / rt : null);
+    out.hr = num(s.hr) ?? (ht ? hw / ht : null);
+  } else {
+    const agg = ps.length ? summarise({ ...s, type: 'intervals', rate: null, hr: null, watts: null }) : {};
+    out.distance = num(s.distance) ?? agg.distance ?? null; out.time = num(s.time) ?? agg.time ?? null;
+    out.split = num(s.split) ?? splitOf(out.time, out.distance) ?? agg.split ?? null;
+    out.rate = num(s.rate) ?? agg.rate ?? null; out.hr = num(s.hr) ?? agg.hr ?? null;
+  }
+  out.watts = num(s.watts) ?? (out.split ? wattsOf(out.split) : null);
+  return out;
+}
+
+function titleOf(s){
+  if (s.name) return s.name;
+  if (s.type === 'steady' && s.test){
+    const d = num(s.distance), t = num(s.time);
+    if (d && d % 500 === 0) return `${fmtDist(d)} test`;
+    if (t && Math.abs(t - Math.round(t / 60) * 60) < 0.05) return `${fmtTime(t)} test`;
+    return d ? `${fmtDist(d)} test` : 'Test piece';
+  }
+  if (s.type === 'intervals'){
+    const p = s.pieces || [];
+    if (!p.length) return 'Intervals';
+    const ds = p.map(x => num(x.distance)), ts = p.map(x => num(x.time));
+    if (p.length === 1) return ds[0] ? fmtDist(ds[0]) : (ts[0] ? fmtTime(ts[0]) : '1 interval');
+    if (ds.every(d => d && d === ds[0])) return `${p.length} × ${fmtDist(ds[0])}`;
+    if (ts.every(t => t && Math.abs(t - ts[0]) < 0.05)) return `${p.length} × ${fmtTime(ts[0])}`;
+    return `${p.length} intervals`;
+  }
+  const d = num(s.distance), t = num(s.time);
+  if (d && d % 1000 === 0) return `${fmtDist(d)} steady`;
+  if (t) return `${fmtTime(t)} steady`;
+  if (d) return `${fmtDist(d)} steady`;
+  return 'Steady state';
+}
+
+/* ================= State ================= */
+let sessions = [];
+let filter = 'all';
+let downloads = null;
+try { window.claude?.use?.('downloads').then(d => { downloads = d; }).catch(() => {}); } catch (e) {}
+
+async function load(){
+  const all = await DB.all('sessions');
+  sessions = (all || []).sort((a, b) => parseDate(b.date) - parseDate(a.date));
+}
+
+/* ================= Home ================= */
+function renderHome(){
+  const now = new Date();
+  $('#todayLabel').textContent = `${WD[now.getDay()]} ${now.getDate()} ${MO[now.getMonth()].slice(0, 3)}`;
+  const has = sessions.length > 0;
+  $('#emptyState').hidden = has;
+  $('#sampleBanner').hidden = !sessions.some(s => s.sample);
+
+  // Hero
+  let mM = 0, yM = 0;
+  sessions.forEach(s => {
+    const d = parseDate(s.date), m = summarise(s).distance || 0;
+    if (d.getFullYear() === now.getFullYear()){ yM += m; if (d.getMonth() === now.getMonth()) mM += m; }
+  });
+  $('#monthMetres').innerHTML = `${esc(fmtM(mM))}<small>m</small>`;
+  $('#monthLabel').textContent = `metres in ${MO[now.getMonth()]}`;
+  $('#yearMetres').textContent = fmtM(yM);
+
+  // Weekly bars
+  const ws = weekStart(now), weeks = [];
+  for (let i = 11; i >= 0; i--){ const a = new Date(ws); a.setDate(a.getDate() - i * 7); weeks.push({ start: a, m: 0 }); }
+  sessions.forEach(s => {
+    const d = parseDate(s.date);
+    for (let i = weeks.length - 1; i >= 0; i--){
+      if (d >= weeks[i].start){ const end = new Date(weeks[i].start); end.setDate(end.getDate() + 7); if (d < end) weeks[i].m += summarise(s).distance || 0; break; }
+    }
+  });
+  const max = Math.max(1, ...weeks.map(w => w.m));
+  $('#weeks').innerHTML = weeks.map((w, i) => {
+    const h = w.m ? Math.max(10, w.m / max * 100) : 8;
+    const lbl = `Week of ${w.start.getDate()} ${MO[w.start.getMonth()].slice(0, 3)}, ${fmtDist(w.m)}`;
+    return `<i class="${w.m ? '' : 'zero'} ${i === 11 ? 'now' : ''}" style="height:${h}%;animation-delay:${i * 30}ms" title="${esc(lbl)}" aria-label="${esc(lbl)}" role="img"></i>`;
+  }).join('');
+  $('#weekNow').textContent = fmtDist(weeks[11].m);
+
+  document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.f === filter)));
+  $('#chartPanel').hidden = !has;
+  renderChart();
+  renderTimeline();
+  renderPlans();
+  renderTeaser();
+}
+
+function filtered(){ return sessions.filter(s => filter === 'all' || s.type === filter); }
+
+function renderChart(){
+  const wrap = $('#chartWrap');
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 84);
+  const pts = filtered().filter(s => parseDate(s.date) >= cutoff)
+    .map(s => ({ s, t: parseDate(s.date).getTime(), y: summarise(s).split }))
+    .filter(p => p.y).sort((a, b) => a.t - b.t);
+  if (pts.length < 2){
+    wrap.innerHTML = `<p class="chart-empty">Log at least two sessions with a split to see your trend.</p>`;
+    return;
+  }
+  const W = Math.max(260, wrap.clientWidth || 320), H = 168, L = 52, R = 10, T = 12, B = 26;
+  const t0 = Math.min(...pts.map(p => p.t)), t1 = Math.max(...pts.map(p => p.t));
+  let y0 = Math.min(...pts.map(p => p.y)), y1 = Math.max(...pts.map(p => p.y));
+  const padY = Math.max(1.5, (y1 - y0) * 0.12); y0 -= padY; y1 += padY;
+  const X = t => L + (t1 === t0 ? (W - L - R) / 2 : (t - t0) / (t1 - t0) * (W - L - R));
+  const Y = v => T + (v - y0) / (y1 - y0) * (H - T - B); // faster (lower) split sits higher
+  const types = filter === 'all' ? ['steady', 'intervals'] : [filter];
+  let svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Average split per session over the last 12 weeks">`;
+  const fast = y0 + padY, slow = y1 - padY;
+  [fast, slow].forEach(v => {
+    svg += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/>`;
+    svg += `<text x="${L - 8}" y="${Y(v) + 4}" text-anchor="end">${esc(fmtSplit(v))}</text>`;
+  });
+  const d0 = new Date(t0), d1 = new Date(t1);
+  svg += `<text x="${L}" y="${H - 6}">${d0.getDate()} ${MO[d0.getMonth()].slice(0, 3)}</text>`;
+  svg += `<text x="${W - R}" y="${H - 6}" text-anchor="end">${d1.getDate()} ${MO[d1.getMonth()].slice(0, 3)}</text>`;
+  types.forEach(ty => {
+    const tp = pts.filter(p => p.s.type === ty);
+    const col = ty === 'steady' ? 'var(--steady)' : 'var(--intv)';
+    if (tp.length > 1) svg += `<polyline fill="none" stroke="${col}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" points="${tp.map(p => `${X(p.t).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ')}"/>`;
+    tp.forEach((p, i) => {
+      const last = i === tp.length - 1;
+      svg += `<circle cx="${X(p.t)}" cy="${Y(p.y)}" r="${last ? 5 : 4}" fill="${last ? col : 'var(--surface)'}" stroke="${col}" stroke-width="2.4"/>`;
+    });
+  });
+  pts.forEach(p => {
+    svg += `<circle class="hit" cx="${X(p.t)}" cy="${Y(p.y)}" r="14" data-id="${esc(p.s.id)}" tabindex="0" role="button" aria-label="${esc(titleOf(p.s))}, ${esc(fmtSplit(p.y))}"><title>${esc(titleOf(p.s))}, ${esc(fmtSplit(p.y))}</title></circle>`;
+  });
+  svg += '</svg>';
+  wrap.innerHTML = svg;
+}
+
+function signature(s){
+  const W = 76, H = 34;
+  const ps = (s.pieces || []).map(pieceSplit).filter(Boolean);
+  const col = s.type === 'steady' ? 'var(--steady)' : 'var(--intv)';
+  if (ps.length < 2){
+    return `<svg class="sig" viewBox="0 0 ${W} ${H}" aria-hidden="true"><rect x="2" y="${H / 2 - 4}" width="${W - 4}" height="8" rx="4" fill="${col}" opacity=".9"/></svg>`;
+  }
+  const lo = Math.min(...ps), hi = Math.max(...ps), n = ps.length;
+  const gap = n > 10 ? 2 : 4, bw = (W - gap * (n - 1)) / n;
+  const bars = ps.map((v, i) => {
+    const k = hi === lo ? 0.7 : 0.35 + 0.65 * (hi - v) / (hi - lo);
+    const h = Math.max(6, k * H);
+    return `<rect x="${(i * (bw + gap)).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(3, bw / 2)}" fill="${col}"/>`;
+  }).join('');
+  return `<svg class="sig" viewBox="0 0 ${W} ${H}" aria-hidden="true">${bars}</svg>`;
+}
+
+function renderTimeline(){
+  const list = filtered();
+  const groups = new Map();
+  list.forEach(s => {
+    const d = parseDate(s.date), k = `${d.getFullYear()}-${pad2(d.getMonth())}`;
+    if (!groups.has(k)) groups.set(k, { d, items: [] });
+    groups.get(k).items.push(s);
+  });
+  const nowY = new Date().getFullYear();
+  let html = '';
+  if (sessions.length && !list.length){
+    html = `<section class="panel"><p class="chart-empty" style="margin:0">No ${filter === 'steady' ? 'steady state' : 'interval'} sessions yet.</p></section>`;
+  }
+  groups.forEach(g => {
+    const metres = g.items.reduce((a, s) => a + (summarise(s).distance || 0), 0);
+    const name = MO[g.d.getMonth()] + (g.d.getFullYear() !== nowY ? ` ${g.d.getFullYear()}` : '');
+    html += `<section class="month" aria-label="${esc(name)}"><div class="month-head"><h2>${esc(name)}</h2><span>${g.items.length} session${g.items.length === 1 ? '' : 's'}, ${esc(fmtDist(metres))}</span></div>`;
+    g.items.forEach(s => {
+      const d = parseDate(s.date), sum = summarise(s);
+      const sub = [];
+      if (sum.split) sub.push(`<span><b>${esc(fmtSplit(sum.split))}</b> /500m</span>`);
+      if (s.type === 'steady' && sum.distance && !/^[\d,]+m steady$/.test(titleOf(s))) sub.push(`<span>${esc(fmtDist(sum.distance))}</span>`);
+      else if (sum.time && s.type === 'steady') sub.push(`<span>${esc(fmtTime(sum.time))}</span>`);
+      if (sum.hr) sub.push(`<span>${Math.round(sum.hr)} bpm</span>`);
+      html += `<button class="row" data-id="${esc(s.id)}">
+        <div><div class="d-num">${d.getDate()}</div><div class="d-wd">${WD[d.getDay()]}</div></div>
+        <div style="min-width:0"><div class="r-title"><span>${esc(titleOf(s))}</span>${(s.photos || []).length ? ICON.cam : ''}</div><div class="r-sub">${sub.join('')}</div></div>
+        ${signature(s)}
+      </button>`;
+    });
+    html += '</section>';
+  });
+  $('#timeline').innerHTML = html;
+}
+
+/* ================= Detail ================= */
+let current = null;
+async function openDetail(id){
+  const s = sessions.find(x => x.id === id); if (!s) return;
+  current = s;
+  const d = parseDate(s.date), sum = summarise(s);
+  const stat = (v, l) => v ? `<div><b>${esc(v)}</b><span>${esc(l)}</span></div>` : '';
+  let html = `<div>
+    <div class="dt-date">${WDL[d.getDay()]} ${d.getDate()} ${MO[d.getMonth()]} ${d.getFullYear()}, ${pad2(d.getHours())}:${pad2(d.getMinutes())}</div>
+    <h1 class="dt-title">${esc(titleOf(s))}</h1>
+    <div class="tag"><i class="dotk ${s.type}"></i>${s.type === 'steady' ? (s.test ? 'Test piece' : 'Steady state') : 'Intervals'}</div>
+  </div>`;
+  if (sum.split) html += `<div class="dt-split"><div class="big">${esc(fmtSplit(sum.split))}</div><span>avg /500m</span></div>`;
+  if (sum.split && num(s.target)){
+    const diff = Math.round((sum.split - s.target) * 10) / 10;
+    const verdict = Math.abs(diff) < 0.05 ? 'right on target' : `${Math.abs(diff).toFixed(1)}s ${diff < 0 ? 'faster' : 'slower'}`;
+    html += `<div class="dt-target">Target <b>${esc(fmtSplit(s.target))}</b>, ${verdict}</div>`;
+  }
+  const stats = [
+    stat(sum.distance && fmtDist(sum.distance), s.type === 'intervals' ? 'work distance' : 'distance'),
+    stat(sum.time && fmtTime(sum.time), s.type === 'intervals' ? 'work time' : 'time'),
+    stat(sum.rate && `${Math.round(sum.rate)} s/m`, 'stroke rate'),
+    stat(sum.hr && `${Math.round(sum.hr)}`, 'avg HR'),
+    stat(num(s.maxHr) && `${s.maxHr}`, 'max HR'),
+    stat(sum.watts && `${Math.round(sum.watts)}W`, 'avg watts'),
+    stat(num(s.cal) && fmtM(s.cal), 'calories'),
+    stat(num(s.drag) && `${s.drag}`, 'drag factor')
+  ].join('');
+  if (stats) html += `<div class="stats">${stats}</div>`;
+
+  const ps = s.pieces || [];
+  if (ps.length){
+    const sps = ps.map(pieceSplit), valid = sps.filter(Boolean);
+    const lo = Math.min(...valid), hi = Math.max(...valid);
+    const label = s.type === 'intervals' ? 'Intervals' : 'Splits';
+    html += `<div class="group splits"><h3>${label}<span>${ps.length}</span></h3><div class="panel" style="padding:6px 18px">`;
+    ps.forEach((p, i) => {
+      const sp = sps[i];
+      const k = !sp ? 0 : (hi === lo ? 0.8 : 0.42 + 0.58 * (hi - sp) / (hi - lo));
+      const isBest = sp && sp === lo && valid.length > 1;
+      const meta = num(p.distance) === 500 ? '500m' : [num(p.distance) && fmtDist(p.distance), num(p.time) && fmtTime(p.time)].filter(Boolean).join(' in ');
+      const side = [num(p.rate) && `<b>${p.rate}</b> s/m`, num(p.hr) && `<b>${p.hr}</b> bpm`].filter(Boolean).join('<br>');
+      html += `<div class="sp">
+        <div class="sp-n">${i + 1}</div>
+        <div class="sp-main"><b>${sp ? esc(fmtSplit(sp)) : '—'}</b>${isBest ? '<span class="best-tag">fastest</span>' : ''}<span>${esc(meta)}</span></div>
+        <div class="sp-side">${side}</div>
+        <div class="sp-n"></div><div class="sp-bar ${s.type}"><i style="width:${(k * 100).toFixed(1)}%;animation-delay:${i * 40}ms"></i></div>
+        ${s.type === 'intervals' && num(p.rest) ? `<div class="sp-n"></div><div class="sp-rest">${esc(fmtTime(p.rest))} rest</div>` : ''}
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+
+  if ((s.photos || []).length){
+    html += `<div class="group"><h3>Photos<span>${s.photos.length}</span></h3><div class="photos" id="dtPhotos"></div></div>`;
+  }
+  if (s.notes) html += `<div class="group"><h3>Notes</h3><p class="notes">${esc(s.notes)}</p></div>`;
+  html += `<button class="danger" id="dtDelete">Delete session</button>`;
+  $('#dtBody').innerHTML = html;
+  showSheet('#detail');
+
+  if ((s.photos || []).length){
+    const box = $('#dtPhotos');
+    for (const pid of s.photos){
+      const ph = await DB.get('photos', pid); if (!ph) continue;
+      const b = document.createElement('button'); b.className = 'ph'; b.setAttribute('aria-label', 'Open photo');
+      const img = document.createElement('img'); img.src = ph.data; img.alt = 'Erg screen photo';
+      b.appendChild(img); b.addEventListener('click', () => openLightbox(ph.data)); box.appendChild(b);
+    }
+  }
+  let armed = null;
+  $('#dtDelete').addEventListener('click', async e => {
+    const btn = e.currentTarget;
+    if (!armed){ btn.classList.add('armed'); btn.textContent = 'Tap again to delete'; armed = setTimeout(() => { armed = null; btn.classList.remove('armed'); btn.textContent = 'Delete session'; }, 3000); return; }
+    clearTimeout(armed);
+    for (const pid of (s.photos || [])) await DB.del('photos', pid);
+    await DB.del('sessions', s.id);
+    await load(); hideSheet('#detail'); renderHome(); toast('Session deleted');
+  });
+}
+
+/* ================= Editor ================= */
+let draft = null;      // working copy
+let edPhotos = [];     // [{id, data, isNew}]
+let removedPhotos = [];
+
+const blankPiece = () => ({ distance: null, time: null, split: null, rate: null, hr: null, rest: null });
+
+function openEditor(s, fromPlan){
+  draft = s ? JSON.parse(JSON.stringify(s)) : {
+    id: uid(), date: localISO(new Date()), type: 'steady', name: '', distance: null, time: null, split: null,
+    rate: null, hr: null, maxHr: null, watts: null, cal: null, drag: null, pieces: [], notes: '', photos: []
+  };
+  if (fromPlan){
+    const sg = suggest(fromPlan);
+    draft.type = fromPlan.type; draft.planId = fromPlan.id; draft.target = sg ? +sg.target.toFixed(1) : null;
+    if (fromPlan.type === 'intervals'){
+      draft.pieces = Array.from({ length: fromPlan.n }, () => ({ ...blankPiece(),
+        distance: fromPlan.mode === 'd' ? fromPlan.value : null, time: fromPlan.mode === 't' ? fromPlan.value : null, rest: fromPlan.rest || null }));
+    } else if (fromPlan.mode === 'd') draft.distance = fromPlan.value; else draft.time = fromPlan.value;
+  }
+  removedPhotos = [];
+  edPhotos = [];
+  $('#edTitle').textContent = s ? 'Edit session' : 'New session';
+  renderEditor();
+  showSheet('#editor');
+  (async () => {
+    for (const pid of draft.photos){ const ph = await DB.get('photos', pid); if (ph) edPhotos.push({ id: pid, data: ph.data, isNew: false }); }
+    renderPhotos();
+  })();
+}
+
+function field(key, label, unit, kind, extra = ''){
+  return `<div class="field"><label for="f-${key}"><span>${label}</span><i>${unit || ''}</i></label>
+    <input class="in" id="f-${key}" data-k="${key}" data-kind="${kind}" autocomplete="off" ${extra}></div>`;
+}
+function pfield(i, key, label, kind){
+  return `<div class="field"><label for="p${i}-${key}"><span>${label}</span></label>
+    <input class="in" id="p${i}-${key}" data-p="${i}" data-k="${key}" data-kind="${kind}" autocomplete="off"></div>`;
+}
+
+function renderEditor(){
+  const isI = draft.type === 'intervals';
+  let h = `<div class="seg" role="group" aria-label="Session type">
+      <button data-type="steady" aria-pressed="${!isI}"><i class="dotk steady"></i>Steady state</button>
+      <button data-type="intervals" aria-pressed="${isI}"><i class="dotk intervals"></i>Intervals</button>
+    </div>
+    <div class="grid2" style="grid-template-columns:1fr">
+      <div class="field"><label for="f-date"><span>Date and time</span></label><input class="in" type="datetime-local" id="f-date" data-k="date" data-kind="text"></div>
+      ${field('name', 'Name', 'optional', 'text', 'placeholder="Auto"')}
+    </div>`;
+  if (!isI) h += `<label class="switch"><input type="checkbox" id="f-test" data-k="test" data-kind="bool"><span class="sw" aria-hidden="true"></span>
+      <span><b>Flat-out test piece</b><br><small>Used to predict your test times</small></span></label>`;
+
+  if (num(draft.target)) h += `<div class="ed-target ${draft.type}">Target split ${esc(fmtSplit(draft.target))} /500m</div>`;
+  if (!isI){
+    h += `<div class="group"><h3>Session</h3><div class="grid2">
+      ${field('distance', 'Distance', 'm', 'int')}
+      ${field('time', 'Time', '', 'time')}
+      ${field('split', 'Avg split', '/500m', 'time')}
+      ${field('rate', 'Stroke rate', 's/m', 'int')}
+      ${field('hr', 'Avg HR', 'bpm', 'int')}
+      ${field('maxHr', 'Max HR', 'bpm', 'int')}
+      ${field('watts', 'Avg watts', 'W', 'int')}
+      ${field('cal', 'Calories', '', 'int')}
+      ${field('drag', 'Drag factor', '', 'int')}
+    </div></div>
+    <div class="group"><h3>Splits<span>optional</span></h3><div id="pieces"></div>
+      <div class="actions"><button class="add accent st" id="addPiece">${ICON.plus}Add split</button></div></div>`;
+  } else {
+    h += `<div class="summary" id="iSummary"></div>
+    <div class="group"><h3>Intervals</h3><div id="pieces"></div>
+      <div class="actions">
+        <button class="add accent" id="addPiece">${ICON.plus}Add interval</button>
+        <button class="add" id="repeatPiece">${ICON.copy}Repeat last</button>
+      </div></div>
+    <div class="group"><h3>Whole session</h3><div class="grid2">
+      ${field('rate', 'Avg stroke rate', 's/m', 'int')}
+      ${field('hr', 'Avg HR', 'bpm', 'int')}
+      ${field('maxHr', 'Max HR', 'bpm', 'int')}
+      ${field('watts', 'Avg watts', 'W', 'int')}
+      ${field('cal', 'Calories', '', 'int')}
+      ${field('drag', 'Drag factor', '', 'int')}
+    </div></div>`;
+  }
+  h += `<div class="group"><h3>Photos</h3><div class="photos" id="edPhotos"></div>
+      <input type="file" id="photoInput" accept="image/*" multiple hidden></div>
+    <div class="group"><h3>Notes</h3><textarea class="in" id="f-notes" data-k="notes" data-kind="text" placeholder="How it felt, damper setting, anything worth remembering"></textarea></div>
+    <p class="form-error" id="formError" hidden></p>`;
+  $('#edBody').innerHTML = h;
+
+  // Fill session fields
+  document.querySelectorAll('#edBody input[data-k]:not([data-p]), #edBody textarea[data-k]').forEach(inp => setInput(inp, draft[inp.dataset.k]));
+  renderPieces();
+  renderPhotos();
+  refreshCalc();
+
+  $('#edBody').querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    collect(); if (draft.type === b.dataset.type) return;
+    draft.type = b.dataset.type;
+    if (draft.type === 'intervals' && !draft.pieces.length) draft.pieces.push(blankPiece());
+    renderEditor();
+  }));
+  $('#addPiece').addEventListener('click', () => { collect(); draft.pieces.push(blankPiece()); renderPieces(true); refreshCalc(); });
+  $('#repeatPiece')?.addEventListener('click', () => {
+    collect(); const last = draft.pieces[draft.pieces.length - 1];
+    draft.pieces.push(last ? { ...last, hr: null } : blankPiece()); renderPieces(true); refreshCalc();
+  });
+  $('#photoInput').addEventListener('change', addPhotos);
+}
+
+function renderPieces(focusLast){
+  const box = $('#pieces'); if (!box) return;
+  const isI = draft.type === 'intervals';
+  box.innerHTML = draft.pieces.map((p, i) => `<div class="piece" data-i="${i}">
+      <div class="piece-head"><b>${isI ? 'Interval' : 'Split'} ${i + 1}</b><button data-rm="${i}" aria-label="Remove ${isI ? 'interval' : 'split'} ${i + 1}">${ICON.x}</button></div>
+      <div class="grid3">
+        ${pfield(i, 'distance', 'Distance', 'int')}${pfield(i, 'time', 'Time', 'time')}${pfield(i, 'split', 'Split', 'time')}
+        ${pfield(i, 'rate', 'Rate', 'int')}${pfield(i, 'hr', 'HR', 'int')}${isI ? pfield(i, 'rest', 'Rest', 'time') : ''}
+      </div></div>`).join('');
+  box.querySelectorAll('input[data-p]').forEach(inp => setInput(inp, draft.pieces[+inp.dataset.p][inp.dataset.k]));
+  box.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
+    collect(); draft.pieces.splice(+b.dataset.rm, 1); renderPieces(); refreshCalc();
+  }));
+  if (focusLast){ const last = box.lastElementChild; last?.querySelector('input')?.focus({ preventScroll: true }); last?.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+}
+
+function setInput(inp, v){
+  const kind = inp.dataset.kind;
+  if (kind === 'time'){
+    inp.inputMode = 'numeric'; inp.placeholder = inp.placeholder || '0:00.0';
+    const d = secToDigits(num(v)); inp.dataset.d = d; inp.value = fmtDigits(d); inp.dataset.len = inp.value.length;
+  } else if (kind === 'int'){
+    inp.inputMode = 'numeric'; inp.value = v == null ? '' : v;
+  } else if (kind === 'bool'){
+    inp.checked = !!v;
+  } else {
+    inp.value = v == null ? '' : v;
+  }
+}
+function readInput(inp){
+  const kind = inp.dataset.kind;
+  if (kind === 'time') return inp.dataset.d ? digitsToSec(inp.dataset.d) : null;
+  if (kind === 'int'){ const n = parseInt(inp.value.replace(/[^\d]/g, ''), 10); return isNaN(n) ? null : n; }
+  if (kind === 'bool') return inp.checked;
+  return inp.value.trim();
+}
+
+function collect(){
+  if (!draft) return;
+  document.querySelectorAll('#edBody [data-k]').forEach(inp => {
+    const v = readInput(inp);
+    if (inp.dataset.p !== undefined){ const p = draft.pieces[+inp.dataset.p]; if (p) p[inp.dataset.k] = (typeof v === 'number' && isNaN(v)) ? null : v; }
+    else draft[inp.dataset.k] = (typeof v === 'number' && isNaN(v)) ? null : v;
+  });
+}
+
+function setCalc(inp, val, fmt){
+  if (!inp) return;
+  const empty = inp.dataset.kind === 'time' ? !inp.dataset.d : !inp.value;
+  if (empty && val){ inp.placeholder = fmt(val); inp.classList.add('calc'); }
+  else { inp.placeholder = inp.dataset.kind === 'time' ? '0:00.0' : ''; inp.classList.remove('calc'); }
+}
+
+function refreshCalc(){
+  collect();
+  const isI = draft.type === 'intervals';
+  // Piece splits
+  draft.pieces.forEach((p, i) => setCalc($(`#p${i}-split`), splitOf(num(p.time), num(p.distance)), fmtSplit));
+  if (!isI){
+    const split = splitOf(num(draft.time), num(draft.distance));
+    setCalc($('#f-split'), split, fmtSplit);
+    const sp = num(draft.split) ?? split;
+    setCalc($('#f-watts'), sp && wattsOf(sp), v => String(Math.round(v)));
+    // Steady: fill whole-session HR and rate from splits if blank
+    const tmp = { ...draft, type: 'intervals', rate: null, hr: null };
+    const s = draft.pieces.length ? summarise(tmp) : {};
+    setCalc($('#f-hr'), s.hr, v => String(Math.round(v)));
+    setCalc($('#f-rate'), s.rate, v => String(Math.round(v)));
+  } else {
+    const s = summarise({ ...draft, rate: null, hr: null, watts: null });
+    setCalc($('#f-rate'), s.rate, v => String(Math.round(v)));
+    setCalc($('#f-hr'), s.hr, v => String(Math.round(v)));
+    setCalc($('#f-watts'), s.watts, v => String(Math.round(v)));
+    const box = $('#iSummary');
+    if (box) box.innerHTML = `<div><b>${s.distance ? esc(fmtDist(s.distance)) : '—'}</b><span>work distance</span></div>
+      <div><b>${s.time ? esc(fmtTime(s.time)) : '—'}</b><span>work time</span></div>
+      <div><b>${s.split ? esc(fmtSplit(s.split)) : '—'}</b><span>avg split</span></div>`;
+  }
+}
+
+// Live input handling (time digits, numeric cleaning, recalculation)
+function onTyped(inp){
+  if (inp.dataset.kind === 'time'){
+    let d = inp.value.replace(/\D/g, '');
+    const prev = inp.dataset.d || '';
+    if (d === prev && inp.value.length < (+inp.dataset.len || 0)) d = d.slice(0, -1);
+    d = d.replace(/^0+/, '').slice(0, 7);
+    inp.dataset.d = d; inp.value = fmtDigits(d); inp.dataset.len = inp.value.length;
+    try { inp.setSelectionRange(inp.value.length, inp.value.length); } catch (_) {}
+    inp.classList.toggle('bad', isNaN(digitsToSec(d)));
+  } else if (inp.dataset.kind === 'int'){
+    const c = inp.value.replace(/[^\d]/g, '').slice(0, 7); if (c !== inp.value) inp.value = c;
+  }
+}
+$('#edBody').addEventListener('input', e => { onTyped(e.target); if (e.target.dataset.kind !== 'text') refreshCalc(); });
+$('#plBody').addEventListener('input', e => { onTyped(e.target); readPlan(); renderSuggest(); });
+
+function renderPhotos(){
+  const box = $('#edPhotos'); if (!box) return;
+  box.innerHTML = '';
+  edPhotos.forEach((ph, i) => {
+    const d = document.createElement('div'); d.className = 'ph';
+    const img = document.createElement('img'); img.src = ph.data; img.alt = 'Erg screen photo';
+    const x = document.createElement('button'); x.className = 'x'; x.innerHTML = ICON.x; x.setAttribute('aria-label', 'Remove photo');
+    x.addEventListener('click', () => { if (!ph.isNew) removedPhotos.push(ph.id); edPhotos.splice(i, 1); renderPhotos(); });
+    d.append(img, x); box.appendChild(d);
+  });
+  const add = document.createElement('button'); add.className = 'ph-add'; add.innerHTML = `${ICON.camAdd}<span>Add photo</span>`;
+  add.addEventListener('click', () => $('#photoInput').click());
+  box.appendChild(add);
+}
+
+async function compress(file){
+  let src;
+  try { src = await createImageBitmap(file); }
+  catch (_){
+    src = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = r.result; };
+      r.onerror = rej; r.readAsDataURL(file);
+    });
+  }
+  const max = 1600, w = src.width, h = src.height, k = Math.min(1, max / Math.max(w, h));
+  const c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.84);
+}
+async function addPhotos(e){
+  const files = [...e.target.files]; e.target.value = '';
+  for (const f of files){
+    try { edPhotos.push({ id: uid(), data: await compress(f), isNew: true }); }
+    catch (_){ toast('That photo couldn’t be read. Try a JPEG or PNG.'); }
+  }
+  renderPhotos();
+}
+
+async function saveDraft(){
+  collect();
+  const err = $('#formError');
+  const bad = document.querySelector('#edBody .in.bad');
+  const fail = m => { err.textContent = m; err.hidden = false; err.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+  if (bad) return fail('One of the times has 60 or more seconds. Check the field outlined in red.');
+  if (draft.type === 'steady' && !num(draft.distance) && !num(draft.time)) return fail('Add a distance or a time to save this session.');
+  if (draft.type === 'intervals'){
+    draft.pieces = draft.pieces.filter(p => Object.values(p).some(v => v != null && v !== ''));
+    if (!draft.pieces.length){ draft.pieces.push(blankPiece()); renderPieces(); return fail('Add at least one interval with a distance or time.'); }
+  } else {
+    draft.pieces = draft.pieces.filter(p => Object.values(p).some(v => v != null && v !== ''));
+  }
+  if (!draft.date) draft.date = localISO(new Date());
+  for (const ph of edPhotos.filter(p => p.isNew)) await DB.put('photos', { id: ph.id, sessionId: draft.id, data: ph.data });
+  for (const pid of removedPhotos) await DB.del('photos', pid);
+  draft.photos = edPhotos.map(p => p.id);
+  draft.updated = Date.now(); draft.created = draft.created || Date.now();
+  const wasEdit = sessions.some(s => s.id === draft.id);
+  await DB.put('sessions', draft);
+  const id = draft.id;
+  if (draft.planId && !wasEdit){ plans = plans.filter(p => p.id !== draft.planId); savePlans(); }
+  await load(); hideSheet('#editor'); renderHome();
+  if (wasEdit && !$('#detail').hidden) openDetail(id);
+  toast(wasEdit ? 'Session updated' : 'Session saved');
+  draft = null;
+}
+
+/* ================= Sheets and lightbox ================= */
+// When the app runs on its own (installed), each open screen gets a history entry,
+// so the Android back gesture closes it instead of leaving the app.
+let framed = true; try { framed = window.top !== window; } catch (_) {}
+const stack = [];
+let zTop = 20;
+function showSheet(sel){
+  const el = $(sel), wasHidden = el.hidden;
+  if (wasHidden) el.style.zIndex = String(++zTop); // newest screen always on top
+  el.hidden = false;
+  if (wasHidden){
+    el.scrollTop = 0;
+    if (!framed){ stack.push(sel); try { history.pushState({ ergSheet: sel }, ''); } catch (_) {} }
+  }
+  document.body.classList.add('locked'); $('#dock').hidden = true;
+}
+function hideSheetNow(sel){
+  $(sel).hidden = true;
+  if ($('#editor').hidden && $('#detail').hidden && $('#planner').hidden && $('#predict').hidden){ document.body.classList.remove('locked'); $('#dock').hidden = false; }
+}
+function hideSheet(sel){
+  if (!framed && stack.length && stack[stack.length - 1] === sel){ history.back(); return; }
+  const i = stack.indexOf(sel); if (i >= 0) stack.splice(i, 1);
+  hideSheetNow(sel);
+}
+window.addEventListener('popstate', () => { const sel = stack.pop(); if (sel) hideSheetNow(sel); });
+function openLightbox(src){ $('#lbImg').src = src; showSheet('#lightbox'); $('#lbClose').focus(); }
+$('#lbClose').addEventListener('click', () => hideSheet('#lightbox'));
+$('#lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') hideSheet('#lightbox'); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!$('#lightbox').hidden) hideSheet('#lightbox');
+  else if (!$('#editor').hidden) hideSheet('#editor');
+  else if (!$('#planner').hidden) hideSheet('#planner');
+  else if (!$('#predict').hidden) hideSheet('#predict');
+  else if (!$('#detail').hidden) hideSheet('#detail');
+});
+
+/* ================= Export and import ================= */
+async function exportAll(){
+  const photos = await DB.all('photos');
+  const payload = JSON.stringify({ app: 'erg', version: 1, exported: new Date().toISOString(), sessions, photos, plans });
+  const now = new Date();
+  const filename = `erg-sessions-${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}.json`;
+  const blob = new Blob([payload], { type: 'application/json' });
+  if (downloads){
+    try { await downloads.save({ filename, data: blob }); toast('Export saved'); }
+    catch (e){ if (e?.code !== 'declined') toast(e?.code === 'host_unavailable' ? 'Saving files isn’t available in this app. Open the page in a browser.' : 'The export couldn’t be saved.'); }
+    return;
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+async function importFile(e){
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const data = JSON.parse(await f.text());
+    if (data.app !== 'erg' || !Array.isArray(data.sessions)) throw new Error('format');
+    for (const p of (data.photos || [])) if (p && p.id && typeof p.data === 'string' && p.data.startsWith('data:image/')) await DB.put('photos', p);
+    let n = 0;
+    for (const s of data.sessions) if (s && s.id && s.date && (s.type === 'steady' || s.type === 'intervals')){ await DB.put('sessions', s); n++; }
+    if (Array.isArray(data.plans)){ const have = new Set(plans.map(p => p.id)); data.plans.forEach(p => { if (p && p.id && !have.has(p.id) && (p.type === 'steady' || p.type === 'intervals')) plans.push(p); }); savePlans(); }
+    await load(); renderHome(); toast(`Imported ${n} session${n === 1 ? '' : 's'}`);
+  } catch (_){ toast('That file isn’t an Erg export.'); }
+}
+
+/* ================= Sample sessions ================= */
+async function loadSample(){
+  const base = new Date(); base.setHours(7, 15, 0, 0);
+  const day = n => { const d = new Date(base); d.setDate(d.getDate() - n); return localISO(d); };
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const jitter = (v, a) => +(v + (rnd() - 0.5) * a).toFixed(1);
+  const list = [];
+  const steady = (n, dist, split, rate, hr) => {
+    const parts = 5, pd = dist / parts;
+    const pieces = Array.from({ length: parts }, (_, i) => { const sp = jitter(split - i * 0.4, 1.2); return { distance: pd, time: +(sp * pd / 500).toFixed(1), split: null, rate, hr: hr - 6 + i * 3, rest: null }; });
+    const time = pieces.reduce((a, p) => a + p.time, 0);
+    list.push({ id: uid(), sample: true, date: day(n), type: 'steady', name: '', distance: dist, time: +time.toFixed(1), split: null, rate, hr, maxHr: hr + 9, watts: null, cal: null, drag: 118, pieces, notes: '', photos: [] });
+  };
+  const intervals = (n, count, dist, split, rate, hr, rest) => {
+    const pieces = Array.from({ length: count }, (_, i) => { const sp = jitter(split + (i === count - 1 ? -1.4 : i * 0.25), 1.4); return { distance: dist, time: +(sp * dist / 500).toFixed(1), split: null, rate, hr: hr - 4 + i * 2, rest }; });
+    list.push({ id: uid(), sample: true, date: day(n), type: 'intervals', name: '', distance: null, time: null, split: null, rate: null, hr: null, maxHr: hr + 12, watts: null, cal: null, drag: 120, pieces, notes: '', photos: [] });
+  };
+  const plan = [[1,'s',10000,127.5,20,148],[3,'i',8,500,106,30,171,90],[5,'s',12000,128.2,19,146],[8,'i',4,2000,113.5,26,166,300],
+    [10,'s',10000,126.8,20,150],[13,'i',8,500,106.6,30,170,90],[16,'s',8000,126.0,21,152],[19,'i',3,3000,116.5,24,162,240],
+    [22,'s',10000,127.9,20,147],[26,'i',6,1000,110.4,28,168,180],[30,'s',14000,129.0,19,145],[34,'i',8,500,107.4,30,169,90],
+    [39,'s',10000,128.6,20,149],[44,'i',4,2000,114.6,26,165,300],[50,'s',10000,129.4,20,148],[57,'i',5,1500,112.8,27,166,210],
+    [64,'s',12000,130.1,19,146],[72,'i',8,500,108.2,30,168,90]];
+  plan.forEach(p => p[1] === 's' ? steady(p[0], p[2], p[3], p[4], p[5]) : intervals(p[0], p[2], p[3], p[4], p[5], p[6], p[7]));
+  const test = (n, dist, splits, rate, hr) => {
+    const pd = dist / splits.length;
+    const pieces = splits.map((sp, i) => ({ distance: pd, time: +(sp * pd / 500).toFixed(1), split: null, rate: rate + (i === splits.length - 1 ? 3 : 0), hr: hr - 8 + i * 3, rest: null }));
+    list.push({ id: uid(), sample: true, test: true, date: day(n), type: 'steady', name: '', distance: dist, time: +pieces.reduce((a, p) => a + p.time, 0).toFixed(1), split: null, rate, hr, maxHr: hr + 6, watts: null, cal: null, drag: 125, pieces, notes: '', photos: [] });
+  };
+  test(41, 2000, [108.6, 110.4, 110.9, 109.1], 32, 181);
+  test(18, 5000, [114.8, 115.9, 116.4, 116.2, 114.9], 28, 176);
+  list.push({ id: uid(), sample: true, date: day(27), type: 'steady', name: '', distance: 7404, time: 1800, split: null, rate: 20, hr: 158, maxHr: 166, watts: null, cal: null, drag: 120, pieces: [], notes: '', photos: [] });
+  for (const s of list) await DB.put('sessions', s);
+  await load(); renderHome();
+}
+async function clearSample(){
+  for (const s of sessions.filter(x => x.sample)){ for (const pid of (s.photos || [])) await DB.del('photos', pid); await DB.del('sessions', s.id); }
+  await load(); renderHome(); toast('Sample sessions removed');
+}
+
+/* ================= Wiring ================= */
+$('#newBtn').addEventListener('click', () => openEditor(null));
+$('#edClose').addEventListener('click', () => { draft = null; hideSheet('#editor'); });
+$('#edSave').addEventListener('click', saveDraft);
+$('#dtClose').addEventListener('click', () => hideSheet('#detail'));
+$('#dtEdit').addEventListener('click', () => current && openEditor(current));
+$('#timeline').addEventListener('click', e => { const r = e.target.closest('.row'); if (r) openDetail(r.dataset.id); });
+$('#chartWrap').addEventListener('click', e => { const c = e.target.closest('.hit'); if (c) openDetail(c.dataset.id); });
+$('#chartWrap').addEventListener('keydown', e => { const c = e.target.closest('.hit'); if (c && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); openDetail(c.dataset.id); } });
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { filter = c.dataset.f; renderHome(); }));
+$('#loadSample').addEventListener('click', loadSample);
+$('#clearSample').addEventListener('click', clearSample);
+
+const menu = $('#menu'), moreBtn = $('#moreBtn');
+const closeMenu = () => { menu.hidden = true; moreBtn.setAttribute('aria-expanded', 'false'); };
+moreBtn.addEventListener('click', e => { e.stopPropagation(); const open = menu.hidden; menu.hidden = !open; moreBtn.setAttribute('aria-expanded', String(open)); });
+document.addEventListener('click', e => { if (!menu.hidden && !e.target.closest('.menu-wrap')) closeMenu(); });
+$('#exportBtn').addEventListener('click', () => { closeMenu(); exportAll(); });
+$('#importBtn').addEventListener('click', () => { closeMenu(); $('#importFile').click(); });
+$('#importFile').addEventListener('change', importFile);
+
+/* ================= Plans and target splits ================= */
+let plans = [];
+try { plans = JSON.parse(localStorage.getItem('erg.plans') || '[]') || []; } catch (_) { plans = []; }
+function savePlans(){ try { localStorage.setItem('erg.plans', JSON.stringify(plans)); } catch (_) {} }
+
+const log2 = x => Math.log(x) / Math.LN2;
+const PAUL = 5; // Paul's Law: about 5 s per 500m slower each time the distance doubles
+
+function planComplete(p){ return p && p.value > 0 && (p.type === 'steady' || p.n > 0); }
+function planTitle(p){
+  const v = p.mode === 'd' ? fmtDist(p.value) : fmtTime(p.value);
+  return p.type === 'intervals' ? `${p.n} × ${v}` : `${v} steady`;
+}
+function planKey(p){ return `${p.type}:${p.mode}${Math.round(p.mode === 't' ? p.value * 10 : p.value)}:${p.type === 'intervals' ? p.n : 1}`; }
+function sessionKey(s){
+  const ps = s.pieces || [];
+  if (s.type === 'intervals'){
+    if (!ps.length) return '';
+    const ds = ps.map(x => num(x.distance)), ts = ps.map(x => num(x.time));
+    if (ds.every(d => d && d === ds[0])) return `intervals:d${ds[0]}:${ps.length}`;
+    if (ts.every(t => t && Math.abs(t - ts[0]) < 0.05)) return `intervals:t${Math.round(ts[0] * 10)}:${ps.length}`;
+    return '';
+  }
+  if (num(s.distance) && num(s.distance) % 100 === 0) return `steady:d${s.distance}:1`;
+  if (num(s.time)) return `steady:t${Math.round(s.time * 10)}:1`;
+  return '';
+}
+function historyPoints(type){
+  return sessions.filter(s => s.type === type && !s.test).map(s => {
+    const sum = summarise(s); if (!sum.split || !sum.distance) return null;
+    const ps = s.pieces || [], n = type === 'intervals' ? Math.max(1, ps.length) : 1;
+    const rests = ps.map(p => num(p.rest)).filter(v => v != null);
+    return { s, split: sum.split, d: sum.distance / n, n, rest: rests.length ? rests.reduce((a, b) => a + b, 0) / rests.length : 0,
+      work: sum.time ? sum.time / n : null, t: parseDate(s.date).getTime(), key: sessionKey(s) };
+  }).filter(Boolean);
+}
+function suggest(p){
+  if (!planComplete(p)) return null;
+  const pts = historyPoints(p.type); if (!pts.length) return { none: true };
+  const now = Date.now(), key = planKey(p);
+  let W = 0, S = 0; const rows = [];
+  pts.forEach(pt => {
+    let dP = p.value, proj = pt.split;
+    if (p.mode === 'd') proj = pt.split + PAUL * log2(dP / pt.d);
+    else for (let i = 0; i < 4; i++){ dP = p.value / proj * 500; proj = pt.split + PAUL * log2(dP / pt.d); }
+    const ageW = Math.pow(0.5, Math.max(0, (now - pt.t) / 864e5) / 28);
+    const sim = Math.exp(-1.2 * Math.abs(log2(dP / pt.d)));
+    let w = ageW * sim;
+    if (p.type === 'intervals'){
+      w *= Math.exp(-0.5 * Math.abs(log2(p.n / pt.n)));
+      w *= Math.exp(-0.5 * Math.abs(log2(((p.rest || 0) + 10) / (pt.rest + 10))));
+    }
+    const exact = pt.key === key;
+    if (exact) w *= 4;
+    W += w; S += w * proj; rows.push({ pt, proj, w, exact, sim });
+  });
+  const mean = S / W;
+  // Follow the trend: weighted straight-line fit of projected split against date, read off at today
+  let target = mean, trend = false;
+  const days = rows.map(r => (r.pt.t - now) / 864e5);
+  const span = Math.max(...days) - Math.min(...days);
+  if (rows.length >= 3 && span >= 14){
+    const mx = rows.reduce((a, r, i) => a + r.w * days[i], 0) / W;
+    let sxy = 0, sxx = 0;
+    rows.forEach((r, i) => { sxy += r.w * (days[i] - mx) * (r.proj - mean); sxx += r.w * (days[i] - mx) ** 2; });
+    if (sxx > 0){
+      const slope = sxy / sxx, atNow = mean + slope * (0 - mx);
+      const floor = Math.min(...rows.map(r => r.proj)) - 1.5, ceil = mean + 1;
+      const clamped = Math.min(ceil, Math.max(floor, atNow));
+      if (Math.abs(clamped - mean) >= 0.2){ target = clamped; trend = true; }
+    }
+  }
+  const sd = Math.sqrt(rows.reduce((a, r) => a + r.w * (r.proj - mean) ** 2, 0) / W);
+  const half = Math.min(4, Math.max(0.8, sd));
+  const matches = rows.filter(r => r.exact).sort((a, b) => b.pt.t - a.pt.t);
+  const best = matches.length ? matches.reduce((a, r) => r.pt.split < a.pt.split ? r : a) : null;
+  const maxSim = Math.max(...rows.map(r => r.sim));
+  return {
+    target, trend, faster: target < mean, lo: target - half, hi: target + half, matches, best, last: matches[0] || null,
+    basis: matches.length ? 'match' : (maxSim > 0.55 ? 'similar' : 'far'),
+    top: rows.sort((a, b) => b.w - a.w).slice(0, 3), count: rows.length
+  };
+}
+
+function renderPlans(){
+  const box = $('#plansList');
+  if (!plans.length){
+    box.innerHTML = `<p class="chart-empty" style="margin:2px 0 10px">Plan your next session to get a target split from your history.</p>`;
+    return;
+  }
+  box.innerHTML = plans.map(p => {
+    const sg = suggest(p);
+    const aim = sg && !sg.none ? `Aim for <b>${esc(fmtSplit(sg.target))}</b> /500m` : 'No target yet';
+    const rest = p.type === 'intervals' && p.rest ? `<span class="plan-rest">${esc(fmtTime(p.rest))} rest</span>` : '';
+    return `<div class="plan">
+      <button class="plan-open" data-plan="${esc(p.id)}"><div class="plan-title"><i class="dotk ${p.type}"></i>${esc(planTitle(p))}${rest}</div><div class="plan-sub">${aim}</div></button>
+      <button class="log-it ${p.type}" data-log="${esc(p.id)}">Log it</button>
+      <button class="plan-x" data-rmplan="${esc(p.id)}" aria-label="Remove plan">${ICON.x}</button>
+    </div>`;
+  }).join('');
+}
+$('#plansList').addEventListener('click', e => {
+  const o = e.target.closest('[data-plan]'), l = e.target.closest('[data-log]'), r = e.target.closest('[data-rmplan]');
+  if (o) openPlanner(plans.find(p => p.id === o.dataset.plan));
+  else if (l) openEditor(null, plans.find(p => p.id === l.dataset.log));
+  else if (r){ plans = plans.filter(p => p.id !== r.dataset.rmplan); savePlans(); renderPlans(); toast('Plan removed'); }
+});
+
+let plan = null;
+function openPlanner(existing){
+  plan = existing ? { ...existing } : { id: uid(), type: 'intervals', mode: 'd', n: null, value: null, rest: null };
+  $('#plTitle').textContent = existing ? 'Edit plan' : 'Plan a session';
+  renderPlanner(); showSheet('#planner');
+}
+function renderPlanner(){
+  const isI = plan.type === 'intervals';
+  const valField = plan.mode === 'd'
+    ? `<div class="field"><label for="pl-value"><span>${isI ? 'Each piece' : 'Distance'}</span><i>m</i></label><input class="in" id="pl-value" data-k="value" data-kind="int" autocomplete="off"></div>`
+    : `<div class="field"><label for="pl-value"><span>${isI ? 'Each piece' : 'Time'}</span></label><input class="in" id="pl-value" data-k="value" data-kind="time" autocomplete="off"></div>`;
+  let h = `<div class="seg" role="group" aria-label="Session type">
+      <button data-ptype="steady" aria-pressed="${!isI}"><i class="dotk steady"></i>Steady state</button>
+      <button data-ptype="intervals" aria-pressed="${isI}"><i class="dotk intervals"></i>Intervals</button>
+    </div>
+    <div class="group"><h3>Session</h3>
+      <div class="mini-seg" role="group" aria-label="Set by">
+        <button data-mode="d" aria-pressed="${plan.mode === 'd'}">Distance</button>
+        <button data-mode="t" aria-pressed="${plan.mode === 't'}">Time</button>
+      </div>
+      ${isI ? `<div class="grid3">
+        <div class="field"><label for="pl-n"><span>Pieces</span></label><input class="in" id="pl-n" data-k="n" data-kind="int" autocomplete="off"></div>
+        ${valField}
+        <div class="field"><label for="pl-rest"><span>Rest</span></label><input class="in" id="pl-rest" data-k="rest" data-kind="time" autocomplete="off"></div>
+      </div>` : `<div class="grid2">${valField}</div>`}
+    </div>
+    <div id="suggest"></div>`;
+  $('#plBody').innerHTML = h;
+  $('#plBody').querySelectorAll('[data-k]').forEach(inp => setInput(inp, plan[inp.dataset.k]));
+  $('#plBody').querySelectorAll('[data-ptype]').forEach(b => b.addEventListener('click', () => { readPlan(); plan.type = b.dataset.ptype; renderPlanner(); }));
+  $('#plBody').querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => { readPlan(); if (plan.mode !== b.dataset.mode){ plan.mode = b.dataset.mode; plan.value = null; } renderPlanner(); }));
+  renderSuggest();
+}
+function readPlan(){
+  $('#plBody').querySelectorAll('[data-k]').forEach(inp => { const v = readInput(inp); plan[inp.dataset.k] = (typeof v === 'number' && isNaN(v)) ? null : v; });
+}
+function renderSuggest(){
+  const box = $('#suggest'); if (!box) return;
+  const kind = plan.type === 'intervals' ? 'interval' : 'steady state';
+  if (!planComplete(plan)){ box.innerHTML = `<div class="suggest"><p class="sg-empty">Enter the session above to see a target split.</p></div>`; return; }
+  const sg = suggest(plan);
+  if (sg.none){ box.innerHTML = `<div class="suggest"><p class="sg-empty">There are no ${kind} sessions in your log yet. Targets are worked out from your own history, so log one first.</p></div>`; return; }
+  let each;
+  if (plan.mode === 'd') each = `Each ${esc(fmtDist(plan.value))} in <b>${esc(fmtTime(sg.target * plan.value / 500))}</b>`;
+  else each = `About <b>${esc(fmtDist(Math.round(plan.value / sg.target * 500)))}</b> per ${esc(fmtTime(plan.value))}`;
+  if (plan.type === 'steady') each = each.replace(/^Each /, 'Finish ').replace(/^About /, 'About ').replace(' per ', ' in ');
+  const fmtDay = r => { const d = new Date(r.pt.t); return `${d.getDate()} ${MO[d.getMonth()].slice(0, 3)}`; };
+  let facts = '';
+  if (sg.last) facts = `<div class="sg-facts">
+      <div><b>${esc(fmtSplit(sg.last.pt.split))}</b><span>last time, ${fmtDay(sg.last)}</span></div>
+      <div><b>${esc(fmtSplit(sg.best.pt.split))}</b><span>best, ${fmtDay(sg.best)}</span></div></div>`;
+  const basis = sg.basis === 'match'
+    ? `Based mostly on ${sg.matches.length} previous ${sg.matches.length === 1 ? 'time' : 'times'} you’ve done this session, weighted towards recent ones.`
+    : sg.basis === 'similar'
+      ? `You haven’t done this exact session, so this scales your recent ${kind} sessions using Paul’s Law (about 5s per 500m slower each time the distance doubles).`
+      : `Your log has nothing close to this length, so this is a rough estimate scaled from quite different ${kind} sessions using Paul’s Law. Treat it as a starting point.`;
+  const trendNote = sg.trend ? (sg.faster ? ' Your splits have been getting quicker, so the target follows that trend.' : ' Your recent splits have been slower, so the target allows for that.') : '';
+  const list = sg.top.map(r => `<li><span>${fmtDay(r)}, ${esc(titleOf(r.pt.s))}</span><span>${esc(fmtSplit(r.pt.split))}</span></li>`).join('');
+  box.innerHTML = `<div class="suggest">
+    <div class="sg-head">Aim for</div>
+    <div class="sg-split ${plan.type}"><div class="big">${esc(fmtSplit(sg.target))}</div><span>/500m</span></div>
+    <p class="sg-line">${each}</p>
+    <p class="sg-line" style="color:var(--muted)">Range ${esc(fmtSplit(sg.lo))} to ${esc(fmtSplit(sg.hi))}</p>
+    ${facts}
+    <p class="sg-basis">${basis}${trendNote}</p>
+    <ul class="sg-list">${list}</ul>
+  </div>`;
+}
+/* ================= Predicted test times ================= */
+const TESTS = [
+  { id: '500', name: '500m', d: 500 }, { id: '1k', name: '1k', d: 1000 }, { id: '2k', name: '2k', d: 2000 },
+  { id: '5k', name: '5k', d: 5000 }, { id: '6k', name: '6k', d: 6000 }, { id: '10k', name: '10k', d: 10000 },
+  { id: '30', name: '30 minutes', t: 1800 }, { id: '30r20', name: '30 minutes at rate 20', t: 1800, r20: true },
+  { id: '60', name: '60 minutes', t: 3600 }, { id: 'hm', name: 'Half marathon', d: 21097 }
+];
+function anchors(kind){
+  return sessions.filter(s => kind === 'test' ? (s.type === 'steady' && s.test)
+      : kind === 'r20' ? (s.type === 'steady' && !s.test) : s.type === 'intervals').map(s => {
+    const sum = summarise(s); if (!sum.split || !sum.distance) return null;
+    if (kind === 'r20' && !(sum.rate && sum.rate <= 20.5)) return null;
+    const n = kind === 'test' || kind === 'r20' ? 1 : Math.max(1, (s.pieces || []).length);
+    return { s, d: sum.distance / n, split: sum.split, time: sum.time, t: parseDate(s.date).getTime() };
+  }).filter(Boolean);
+}
+function project(list, test, halfLife){
+  if (!list.length) return null;
+  const now = Date.now(); let W = 0, S = 0, nearest = Infinity; const rows = [];
+  list.forEach(a => {
+    let dT = test.d, proj = a.split;
+    if (test.d) proj = a.split + PAUL * log2(test.d / a.d);
+    else for (let i = 0; i < 4; i++){ dT = test.t / proj * 500; proj = a.split + PAUL * log2(dT / a.d); }
+    const gap = Math.abs(log2(dT / a.d));
+    const w = Math.pow(0.5, Math.max(0, (now - a.t) / 864e5) / halfLife) * Math.exp(-gap);
+    W += w; S += w * proj; nearest = Math.min(nearest, gap); rows.push({ a, w });
+  });
+  const split = S / W;
+  const dist = test.d || test.t / split * 500, time = test.t || split * test.d / 500;
+  return { split, dist, time, conf: nearest <= 0.6 ? 'good' : nearest <= 2 ? 'fair' : 'rough', top: rows.sort((x, y) => y.w - x.w).slice(0, 3) };
+}
+function bestActual(test){
+  const pool = sessions.filter(s => s.type === 'steady');
+  let best = null;
+  pool.forEach(s => {
+    const sum = summarise(s); if (!sum.distance || !sum.time) return;
+    if (test.r20 ? !(sum.rate && sum.rate <= 20.5) : !s.test) return;
+    if (test.d && Math.abs(sum.distance - test.d) / test.d < 0.01){ if (!best || sum.time < best.time) best = { time: sum.time, dist: sum.distance, s }; }
+    if (test.t && Math.abs(sum.time - test.t) / test.t < 0.01){ if (!best || sum.distance > best.dist) best = { time: sum.time, dist: sum.distance, s }; }
+  });
+  return best;
+}
+function predictAll(){
+  const tests = anchors('test'), source = tests.length ? 'test' : 'training';
+  const base = tests.length ? tests : anchors('intervals');
+  const r20 = anchors('r20');
+  const results = TESTS.map(t => {
+    const p = t.r20 ? project(r20, t, 42) : project(base, t, source === 'test' ? 90 : 42), best = bestActual(t);
+    // Don't predict worse than something you've actually done in the last 90 days
+    if (p && best && Date.now() - parseDate(best.s.date).getTime() < 90 * 864e5){
+      if (t.d && best.time < p.time){ p.time = best.time; p.split = best.time / t.d * 500; }
+      if (t.t && best.dist > p.dist){ p.dist = best.dist; p.split = t.t / best.dist * 500; }
+    }
+    return { t, p, best };
+  });
+  return { source, count: base.length, results };
+}
+const CONF = { good: 'close to sessions you’ve done', fair: 'scaled from different distances', rough: 'rough, a long way from your data' };
+function renderTeaser(){
+  const all = predictAll(), two = all.results.find(r => r.t.id === '2k');
+  $('#teaserLabel').textContent = two.p ? (all.source === 'test' ? 'Predicted 2k' : 'Predicted 2k, from training') : 'Predicted test times';
+  $('#teaserVal').textContent = two.p ? fmtSplit(two.p.time) : 'Not enough data yet';
+  $('#teaserVal').style.fontSize = two.p ? '' : '1.15rem';
+}
+function renderPredict(){
+  const all = predictAll(), byId = id => all.results.find(r => r.t.id === id);
+  const fmtDay = ms => { const d = new Date(ms); return `${d.getDate()} ${MO[d.getMonth()].slice(0, 3)}`; };
+  let h = '';
+  if (!all.count){
+    h = `<p class="pr-note">There’s nothing to predict from yet. Log an interval session, or tick “Flat-out test piece” when you log a test, and your predictions will appear here.</p>`;
+    $('#prBody').innerHTML = h; return;
+  }
+  const two = byId('2k');
+  h += `<div class="pr-hero"><div class="lbl">2k</div><div class="big">${esc(fmtSplit(two.p.time))}</div>
+    <div class="sub"><b>${esc(fmtSplit(two.p.split))}</b> /500m${two.best ? `, best <b>${esc(fmtSplit(two.best.time))}</b> on ${fmtDay(parseDate(two.best.s.date))}` : ''}</div></div>`;
+  if (all.source === 'training') h += `<p class="pr-note">You haven’t logged a test piece yet, so these come from your interval training. Training pieces aren’t flat out, so these are likely slower than you’d manage in a real test. Tick “Flat-out test piece” when you log a test to sharpen them.</p>`;
+  h += `<div class="pr-list">`;
+  all.results.forEach(({ t, p, best }) => {
+    if (t.id === '2k') return;
+    let val, sub, meta;
+    if (!p){
+      val = '—'; sub = '';
+      meta = t.r20 ? 'Log a steady session at rate 20 or under to predict this' : 'Not enough data yet';
+    } else if (t.d){
+      val = fmtSplit(p.time); sub = t.d === 500 ? '' : `${fmtSplit(p.split)} /500m`;
+      meta = `<i class="conf ${p.conf}"></i>${CONF[p.conf]}`;
+    } else {
+      val = fmtDist(Math.round(p.dist)); sub = `${fmtSplit(p.split)} /500m`;
+      meta = `<i class="conf ${p.conf}"></i>${t.r20 ? 'from your steady sessions at rate 20 or under' : CONF[p.conf]}`;
+    }
+    if (best) meta += `<br><span class="pr-pb">Best ${esc(t.d ? fmtSplit(best.time) : fmtDist(best.dist))}</span>, ${fmtDay(parseDate(best.s.date))}`;
+    h += `<div class="pr-row"><div><div class="pr-name">${esc(t.name)}</div><div class="pr-meta">${meta}</div></div>
+      <div class="pr-val"><b>${esc(val)}</b><span>${esc(sub)}</span></div></div>`;
+  });
+  h += `</div>`;
+  const used = two.p.top.map(r => `<li><span>${fmtDay(r.a.t)}, ${esc(titleOf(r.a.s))}</span><span>${esc(fmtSplit(r.a.split))}</span></li>`).join('');
+  h += `<div class="group"><h3>How these are worked out</h3><div class="suggest" style="padding:16px 18px">
+    <p class="sg-empty" style="color:var(--ink)">${all.source === 'test'
+      ? `Each prediction scales your ${all.count} test ${all.count === 1 ? 'piece' : 'pieces'} to the new distance using Paul’s Law (about 5s per 500m slower each time the distance doubles), giving more weight to recent tests and to tests close in length.`
+      : `Each prediction scales your interval pieces to the new distance using Paul’s Law (about 5s per 500m slower each time the distance doubles), giving more weight to recent sessions and to pieces close in length.`}
+      The 30 minutes at rate 20 prediction uses only your steady sessions rowed at rate 20 or under.</p>
+    <p class="sg-basis">Sessions counting most towards your 2k</p>
+    <ul class="sg-list">${used}</ul></div></div>`;
+  $('#prBody').innerHTML = h;
+}
+$('#predictBtn').addEventListener('click', () => { renderPredict(); showSheet('#predict'); });
+$('#prClose').addEventListener('click', () => hideSheet('#predict'));
+
+$('#planBtn').addEventListener('click', () => openPlanner(null));
+$('#plClose').addEventListener('click', () => { plan = null; hideSheet('#planner'); });
+$('#plSave').addEventListener('click', () => {
+  readPlan();
+  if (!planComplete(plan)){ toast(plan.type === 'intervals' ? 'Add the number of pieces and their length.' : 'Add a distance or time.'); return; }
+  if (plan.type === 'steady'){ plan.n = 1; plan.rest = null; }
+  const i = plans.findIndex(p => p.id === plan.id);
+  if (i >= 0) plans[i] = plan; else plans.push(plan);
+  savePlans(); hideSheet('#planner'); renderPlans(); toast(i >= 0 ? 'Plan updated' : 'Plan saved'); plan = null;
+});
+
+let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(renderChart, 120); });
+
+(async () => {
+  await DB.init();
+  try { if (!framed && navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (_) {}
+  await load();
+  renderHome();
+  if (!DB.ok) toast('Storage is unavailable here, so sessions last until you close the page.');
+})();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
+</body>
+</html>
